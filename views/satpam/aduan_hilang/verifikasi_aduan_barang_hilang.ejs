@@ -1,0 +1,213 @@
+<%- include ../../partials/satpam_layout/header.ejs %>
+<%- include ../../partials/satpam_layout/sidebar.ejs %>
+
+<!-- Main Content -->
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Permintaan Layanan: Aduan Kehilangan Barang</h1>
+        </div>
+        <% if (success.length > 0) { %>
+        <div class="alert alert-primary alert-has-icon alert-dismissible show fade">
+            <div class="alert-icon"><i class="fas fa-thumbs-up"></i></div>
+            <div class="alert-body">
+                <button class="close" data-dismiss="alert">
+                    <span>×</span>
+                </button>
+                <div class="alert-title">Success</div>
+                <%= success %>
+            </div>
+        </div>
+        <% } %>
+        <% if (error.length > 0) { %>
+        <div class="alert alert-danger alert-has-icon alert-dismissible show fade">
+            <div class="alert-icon"><i class="fas fa-thumbs-up"></i></div>
+            <div class="alert-body">
+                <button class="close" data-dismiss="alert">
+                    <span>×</span>
+                </button>
+                <div class="alert-title">Error</div>
+                <%= success %>
+            </div>
+        </div>
+        <% } %>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h4>Daftar Permintaan Validasi Aduan Kehilangan</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="aduan-hilang">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Nama Pelapor</th>
+                                        <th scope="col">Deskripsi</th>
+                                        <th scope="col">Lokasi Hilang</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Verifkasi</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% aduan.forEach((aduan, index) => { %>
+                                    <tr>
+                                        <th scope="row"><%= index + 1 %></th>
+                                        <td><a href="#komentarModal" class="detail-aduan" data-toggle="modal"
+                                                data-target="#komentarModal" data-id="<%= aduan.id %>"
+                                                data-aduan="<%= aduan.judul_aduan %>"
+                                                data-deskripsi="<%= aduan.deskripsi_aduan %>"
+                                                data-lokasi="<%= aduan.lokasi_aduan %>"
+                                                data-nama="<%= aduan.User.nama_user %>"
+                                                data-telp="<%= aduan.User.telp_user %>"
+                                                data-email="<%= aduan.User.email %>">
+                                                <%= aduan.User.nama_user %>
+                                            </a>
+                                        </td>
+                                        <td><%= aduan.deskripsi_aduan %></td>
+                                        <td><%= aduan.lokasi_aduan %></td>
+                                        <% if(aduan.status_aduan === 'menunggu validasi satpam') { %>
+                                        <td class="text-warning font-weight-bold text-capitalize">
+                                            <%= aduan.status_aduan %></td>
+                                        <td><button onclick="validasi_aduan('<%= aduan.id %>')"
+                                                class="btn btn-success">Verifikasi
+                                                Aduan
+                                            </button>
+                                        </td>
+                                        <td><a class="btn btn-secondary disabled btn-action" aria-disabled=""
+                                                data-toggle="tooltip" title="Print Aduan"><i
+                                                    class="fas fa-print"></i></a>
+                                        </td>
+                                        <% } else if (aduan.status_aduan === 'menunggu validasi admin / kasubbag') { %>
+                                        <td class="text-warning font-weight-bold text-capitalize">
+                                            <%= aduan.status_aduan %>
+                                        </td>
+                                        <td><a href="pengajuan_aduan_komentar.html"
+                                                class="btn btn-secondary disabled">Verifikasi
+                                                Aduan</a>
+                                        </td>
+                                        <td><a class="btn btn-secondary disabled btn-action" aria-disabled=""
+                                                data-toggle="tooltip" title="Print Aduan"><i
+                                                    class="fas fa-print"></i></a>
+                                        </td>
+                                        <% } else {%>
+                                        <td class="text-primary font-weight-bold text-capitalize">
+                                            <%= aduan.status_aduan %>
+                                        </td>
+                                        <td><a href="pengajuan_aduan_komentar.html"
+                                                class="btn btn-secondary disabled">Verifikasi
+                                                Aduan</a>
+                                        </td>
+                                        <td><a class="btn btn-dark btn-action" data-toggle="tooltip"
+                                                title="Print Aduan"><i class="fas fa-print"></i></a>
+                                        </td>
+                                        <% } %>
+                                    </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="modal fade" id="komentarModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-lg modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Detail Aduan dan Komentar</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="GET">
+                    <div class="form-group">
+                        <label>Nama Pengadu</label>
+                        <input type="text" class="form-control nama_user" name="nama_user" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Nomor Telepon Pengadu</label>
+                        <input type="text" class="form-control telp_user" name="telp_user" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Pengadu</label>
+                        <input type="text" class="form-control email_user" name="email_user" disabled>
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <label>Judul Aduan</label>
+                        <input type="text" class="form-control judul_aduan" name="judul_aduan" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Deskripsi Aduan</label>
+                        <textarea type="text" class="form-control deskripsi_aduan" name="deskripsi_aduan"
+                            disabled> </textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Lokasi Aduan</label>
+                        <input class="form-control lokasi_aduan" rows="1" name="lokasi_aduan" name="tanggapan_aduan"
+                            disabled>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include ../../partials/footer.ejs %>
+
+<script>
+    function validasi_aduan(id) {
+        let idAduan = id;
+        swal({
+            title: "Yakin ingin memvalidasi aduan kehilangan ini?",
+            text: "Konfirmasi penyetujuan tidak dapat kembali lagi",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+        }).then((willDelete) => {
+            if (willDelete) {
+                swal({
+                    title: 'Informasi',
+                    text: "Success memvalidasi aduan kehilangan",
+                    position: 'top-left',
+                    icon: 'success',
+                    buttons: false,
+                    timer: 2000
+                }).then((suksesDelete) => {
+                    window.location.assign(`/satpam/aduan_hilang/validasi/${idAduan}`);
+                })
+            }
+        })
+    };
+
+    $(document).ready(function () {
+        $('#aduan-hilang').on('click', '.detail-aduan', function () {
+            const id = $(this).data('id');
+            const aduan = $(this).data('aduan');
+            const deskripsi = $(this).data('deskripsi');
+            const lokasi = $(this).data('lokasi');
+            const nama = $(this).data('nama');
+            const telp = $(this).data('telp');
+            const email = $(this).data('email');
+
+            $('#komentarModal').modal('show');
+            $('.id').val(id);
+            $('.judul_aduan').val(aduan);
+            $('.deskripsi_aduan').val(deskripsi);
+            $('.lokasi_aduan').val(lokasi);
+            $('.nama_user').val(nama);
+            $('.telp_user').val(telp);
+            $('.email_user').val(email);
+        });
+    });
+</script>

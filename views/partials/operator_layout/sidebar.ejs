@@ -1,0 +1,35 @@
+<!-- Sidebar -->
+<div class="main-sidebar sidebar-style-2">
+    <aside id="sidebar-wrapper">
+        <div class="sidebar-brand">
+            <a href="/operator">Stisla</a>
+        </div>
+        <div class="sidebar-brand sidebar-brand-sm">
+            <a href="/operator">St</a>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-header">Dashboard</li>
+            <!-- <li class="active"> -->
+            <li class="<%= current_url === '/operator' ? 'active' : '' %>">
+                <a class="nav-link" href="/operator"><i class="fas fa-home"></i><span>Dashboard</span></a>
+            </li>
+            <li class="menu-header">Aduan dan Layanan</li>
+            <li class="<% if (current_url == '/operator/aduan_lapor') { %>
+                active
+            <% }  else  if (current_url == '/operator/aduan_lapor/edit_aduan') { %>
+                active
+            <% } %>">
+                <a class="nav-link" href="/operator/aduan_lapor">
+                    <i class="fas fa-paper-plane"></i> <span>Pengajuan
+                        Aduan</span></a>
+            </li>
+        </ul>
+
+        <div class="mt-4 mb-4 p-3 hide-sidebar-mini">
+            <a href="/logout" class="btn btn-danger btn-lg btn-block btn-icon-split">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </aside>
+</div>

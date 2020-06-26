@@ -1,0 +1,159 @@
+<%- include ../../partials/satpam_layout/header.ejs %>
+<%- include ../../partials/satpam_layout/sidebar.ejs %>
+
+<!-- Main Content -->
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Permintaan Layanan: Pinjam Kunci</h1>
+        </div>
+        <ul class="nav nav-pills mb-4">
+            <li class="nav-item">
+                <a class="nav-link active" href="/satpam/pinjam_kunci/validasi_pinjam_kunci">Peminjaman Kunci Ruangan
+                    <i class="fas fa-key"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/satpam/pinjam_kunci/validasi_kembali_kunci">Pengembalian Kunci Ruangan</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/satpam/pinjam_kunci/daftar_kunci">Daftar Kunci Ruangan</a>
+            </li>
+        </ul>
+        <% if (success.length > 0) { %>
+        <div class="alert alert-primary alert-has-icon alert-dismissible show fade">
+            <div class="alert-icon"><i class="fas fa-thumbs-up"></i></div>
+            <div class="alert-body">
+                <button class="close" data-dismiss="alert">
+                    <span>×</span>
+                </button>
+                <div class="alert-title">Success</div>
+                <%= success %>
+            </div>
+        </div>
+        <% } %>
+        <% if (failed.length > 0) { %>
+        <div class="alert alert-danger alert-has-icon alert-dismissible show fade">
+            <div class="alert-icon"><i class="fas fa-thumbs-up"></i></div>
+            <div class="alert-body">
+                <button class="close" data-dismiss="alert">
+                    <span>×</span>
+                </button>
+                <div class="alert-title">Failed</div>
+                <%= failed %>
+            </div>
+        </div>
+        <% } %>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h4>Daftar Permintaan Validasi Peminjaman Kunci</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Nama Peminjam</th>
+                                        <th scope="col">No Telepon</th>
+                                        <th scope="col">Ruangan</th>
+                                        <th scope="col">Tanggal Pinjam</th>
+                                        <th scope="col">Action</th>
+                                        <!-- <th scope="col">Tolak</th> -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% peminjaman_kunci.forEach((pinjam, index) => { %>
+                                    <tr>
+                                        <th scope="row"><%= index + 1 %></th>
+                                        <td><%= pinjam.User.nama_user %></td>
+                                        <td><%= pinjam.User.telp_user %></td>
+                                        <td><%= pinjam.Kunci.nama_ruangan %></td>
+                                        <td><%= pinjam.tanggal_pinjam %></td>
+                                        <td>
+                                            <!-- <form action="/satpam/pinjam_kunci/validasi_pinjam_kunci/<%= pinjam.id %>"
+                                                method="post">
+                                                <button class="btn btn-success">
+                                                    Validasi Peminjaman
+                                                </button>
+                                            </form> -->
+                                            <a class="btn btn-success btn-action" data-toggle="tooltip" title="Validasi"
+                                                onclick="validasi_kunci('<%= pinjam.id %>')">Validasi
+                                            </a>
+                                            <a class="btn btn-danger btn-action" data-toggle="tooltip" title="Tolak"
+                                                onclick="tolak_kunci('<%= pinjam.id %>')">Tolak
+                                            </a>
+                                        </td>
+                                        <!-- <td>
+                                            <form action="/satpam/pinjam_kunci/tolak_pinjam_kunci/<%= pinjam.id %>"
+                                                method="post">
+                                                <button class="btn btn-danger">Tolak Peminjaman</button>
+                                            </form>
+                                            <a href="/satpam/pinjam_kunci/tolak_pinjam_kunci/<%= pinjam.id %>"
+                                                class="btn btn-danger btn-action" data-toggle="tooltip"
+                                                title="Edit">Tolak
+                                            </a>
+                                        </td> -->
+                                    </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<%- include ../../partials/footer.ejs %>
+<script>
+    function tolak_kunci(id) {
+        let idPinjam = id;
+        swal({
+            title: "Yakin ingin menolak peminjaman kunci ini?",
+            text: "Konfirmasi penolakan tidak dapat kembali lagi",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+        }).then((willDelete) => {
+            if (willDelete) {
+                swal({
+                    title: 'Informasi',
+                    text: "Success menolak peminjaman kunci",
+                    position: 'top-left',
+                    icon: 'success',
+                    buttons: false,
+                    timer: 2000
+                }).then((suksesDelete) => {
+                    window.location.assign(`/satpam/pinjam_kunci/tolak_pinjam_kunci/${idPinjam}/`);
+                })
+            }
+        })
+    }
+
+    function validasi_kunci(id) {
+        let idPinjam = id;
+        swal({
+            title: "Yakin ingin menyetujui peminjaman kunci ini?",
+            text: "Konfirmasi penyetujuan tidak dapat kembali lagi",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+        }).then((willDelete) => {
+            if (willDelete) {
+                swal({
+                    title: 'Informasi',
+                    text: "Success menyetujui peminjaman kunci",
+                    position: 'top-left',
+                    icon: 'success',
+                    buttons: false,
+                    timer: 2000
+                }).then((suksesDelete) => {
+                    window.location.assign(`/satpam/pinjam_kunci/validasi_pinjam_kunci/${idPinjam}/`);
+                })
+            }
+        })
+    }
+</script>

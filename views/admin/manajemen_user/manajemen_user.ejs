@@ -1,0 +1,101 @@
+<%- include ../../partials/admin_layout/header.ejs %>
+<%- include ../../partials/admin_layout/sidebar.ejs %>
+
+<!-- Main Content -->
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Manajemen User</h1>
+        </div>
+        <% if (success.length > 0) { %>
+        <div class="alert alert-primary alert-has-icon alert-dismissible show fade">
+            <div class="alert-icon"><i class="fas fa-thumbs-up"></i></div>
+            <div class="alert-body">
+                <button class="close" data-dismiss="alert">
+                    <span>×</span>
+                </button>
+                <div class="alert-title">Success</div>
+                <%= success %>
+            </div>
+        </div>
+        <% } %>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h4>Daftar User</h4>
+                        <a href="/admin/manajemen_user/tambah" class="btn btn-primary text-right">Tambah
+                            Pengguna <i class="fas fa-user-plus"></i></a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Nama</th>
+                                        <th scope="col">NIP / NIK</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">No Handphone</th>
+                                        <th scope="col">Kategori User</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% users.forEach((user, index) => { %>
+                                    <tr>
+                                        <th scope="row"><%= index + 1 %></th>
+                                        <td><%= user.nama_user %></td>
+                                        <td><%= user.username %></td>
+                                        <td><%= user.email %></td>
+                                        <td><%= user.telp_user %></td>
+                                        <td class="text-capitalize"><%= user.Role.role %></td>
+                                        <td>
+                                            <a class="btn btn-primary btn-action"
+                                                href="/admin/manajemen_user/edit/<%= user.id %>" title="Edit"><i
+                                                    class="fas fa-pencil-alt"></i>
+                                            </a>
+                                            <button class="btn btn-danger btn-action delete-btn"
+                                                data-id="<%= user.id %>"><i class="fas fa-trash"></i>
+                                            </button>
+
+                                            <!-- kalo make sweetalert -->
+                                            <!-- <button class="btn btn-danger btn-action delete-btn"
+                                                onclick="delete_user(`<%= user.id %>`)"><i class="fas fa-trash"></i>
+                                            </button> -->
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<%- include ../../partials/footer.ejs %>
+<script>
+    $('.delete-btn').click(function (event) {
+        event.preventDefault();
+        const id = $(this).attr('data-id');
+        if (confirm(`Are you sure want to delete this user?`)) {
+            // alert(id)
+            $.ajax({
+                url: '/admin/manajemen_user/delete/' + id,
+                method: 'DELETE',
+                data: { id },
+            }).done(function (res) {
+                if (res.success) {
+                    console.log(`Success! User has been removed`);
+                    window.location.reload();
+                } else {
+                    alert('something error please try again!')
+                }
+            });
+        };
+    });
+
+</script>

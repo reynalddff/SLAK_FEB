@@ -1,0 +1,60 @@
+<!-- Sidebar -->
+<div class="main-sidebar sidebar-style-2">
+    <aside id="sidebar-wrapper">
+        <div class="sidebar-brand">
+            <a href="/admin">Stisla</a>
+        </div>
+        <div class="sidebar-brand sidebar-brand-sm">
+            <a href="/admin">St</a>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-header">Dashboard</li>
+            <li class="<%= current_url === '/admin' ? 'active' : '' %>"><a class="nav-link" href="/admin"><i
+                        class="fas fa-home"></i>
+                    <span>Dashboard</span></a>
+            </li>
+            <li class="menu-header">Aduan dan Layanan</li>
+            <li class="<% if (current_url == '/admin/aduan_lapor') { %>
+                active
+            <% }  else  if (current_url == '/admin/aduan_lapor/edit_aduan') { %>
+                active
+            <% } %>">
+                <a class="nav-link" href="/admin/aduan_lapor">
+                    <i class="fas fa-paper-plane"></i> <span>Pengajuan
+                        Aduan</span></a>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="nav-link has-dropdown"><i class="fas fa-hands-helping"></i> <span>Permintaan
+                        Layanan</span></a>
+                <ul class=" dropdown-menu">
+                    <li><a class="nav-link" href="pinjam_kunci.html">Peminjaman Kunci</a></li>
+                    <li class="<% if (current_url == '/admin/aduan_hilang') {%>active<% } %>">
+                        <a class="nav-link" href="/admin/aduan_hilang">
+                            Pengaduan Barang Hilang
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="menu-header">Survey</li>
+            <li><a class="nav-link" href="survey.html"><i class="far fa-smile"></i> <span>Survey</span></a>
+            </li>
+            <li class="menu-header">User</li>
+            <li class="<% if (current_url == '/admin/manajemen_user') { %>
+                active
+            <% }  else  if (current_url == '/admin/manajemen_user/tambah') { %>
+                active
+            <% } %>">
+                <a class="nav-link" href="/admin/manajemen_user"><i class="fas fa-users"></i>
+                    <span>Manajemen User</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="mt-4 mb-4 p-3 hide-sidebar-mini">
+            <a href="/logout" class="btn btn-danger btn-lg btn-block btn-icon-split">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </aside>
+</div>

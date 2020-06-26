@@ -1,0 +1,69 @@
+<%- include ../../partials/karyawan_layout/header.ejs %>
+<%- include ../../partials/karyawan_layout/sidebar.ejs %>
+
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Pengajuan Aduan - Komentar</h1>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-md-6 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="text-capitalize">Penyelsaian Aduan</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="gallery gallery-fw" data-item-height="150">
+                                    <div class="gallery-item" data-image="/images/news/img03.jpg" data-title="Image 1">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="gallery gallery-fw" data-item-height="150">
+                                    <div class="gallery-item" data-image="/images/news/img07.jpg" data-title="Image 2">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="gallery gallery-fw" data-item-height="150">
+                                    <div class="gallery-item" data-image="/images/news/img05.jpg" data-title="Image 3">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Deskripsi Penyelsaian Aduan</label>
+                            <textarea class="form-control" rows="1" placeholder="<%= aduan.tanggapan_aduan %>"
+                                disabled></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="text-capitalize">Penyelsaian Aduan</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/karyawan/aduan_lapor/komentar/<%=aduan.id%>">
+                            <div class="form-group">
+                                <label for="">Nilai (1-10)</label>
+                                <input class="form-control" name="deskripsi_komentar"></input>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Komentar</label>
+                                <textarea class="form-control" name="nilai_komentar" rows="1"></textarea>
+                            </div>
+                            <button class="btn btn-primary" style="float: right;">Submit Komentar</button>
+                            <a href="/karyawan/aduan_lapor" class="mr-3 btn btn-dark" style="float: right;">Kembali</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<%- include ../../partials/footer.ejs %>

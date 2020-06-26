@@ -1,0 +1,24 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "kerbaumejus98",
+    "database": "pengajuan-aduan",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "operatorsAliases": false
+  },
+  "production": {
+    "username": "postgres",
+    "password": "kerbaumejus98",
+    "database": "pengajuan-aduan",
+    "host": "localhost",
+    "dialect": "postgres"
+  }
+}

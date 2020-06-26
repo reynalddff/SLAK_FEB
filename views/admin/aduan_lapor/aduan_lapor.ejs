@@ -1,0 +1,211 @@
+<%- include ../../partials/admin_layout/header.ejs %>
+<%- include ../../partials/admin_layout/sidebar.ejs %>
+
+<!-- Main Content -->
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Pengajuan Aduan</h1>
+        </div>
+        <% if (success.length > 0) { %>
+        <div class="alert alert-primary alert-has-icon alert-dismissible show fade">
+            <div class="alert-icon"><i class="fas fa-thumbs-up"></i></div>
+            <div class="alert-body">
+                <button class="close" data-dismiss="alert">
+                    <span>×</span>
+                </button>
+                <div class="alert-title">Success</div>
+                <%= success %>
+            </div>
+        </div>
+        <% } %>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h4>Daftar Pengajuan Aduan Masuk</h4>
+                        <a href="pengajuan_aduan_form.html" class="btn btn-dark text-right" style="float:right;">Print
+                            Aduan
+                            <i class="fas fa-print"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table" id="aduan-lapor">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Nama</th>
+                                        <th scope="col">No Handphone</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Selsaikan Aduan</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% aduans.forEach((aduan, index) => {%>
+                                    <tr>
+                                        <th scope="row"><%= index + 1 %></th>
+                                        <td>
+                                            <a href="#komentarModal" class="detail-aduan" data-toggle="modal"
+                                                data-target="#komentarModal" data-id="<%= aduan.id %>"
+                                                data-nama="<%= aduan.User.nama_user %>"
+                                                data-email="<%= aduan.User.email %>"
+                                                data-aduan="<%= aduan.deskripsi_aduan %>"
+                                                data-nohp="<%= aduan.User.telp_user %>"
+                                                data-tanggapan="<%= aduan.tanggapan_aduan %>"
+                                                data-nilai="<%= aduan.Komentar.nilai_komentar %>"
+                                                data-komentar="<%= aduan.Komentar.deskripsi_komentar %>">
+                                                <%= aduan.User.nama_user %>
+                                            </a>
+                                        </td>
+                                        <td><%= aduan.User.telp_user %></td>
+                                        <% if (aduan.status_aduan === 'belum') { %>
+                                        <td class="text-danger text-capitalize font-weight-bold">Belum <br>
+                                            diselsaikan
+                                        </td>
+                                        <td>
+                                            <a href="/admin/aduan_lapor/<%=aduan.id%>/edit_aduan"
+                                                class="btn btn-success">Menyelsaikan
+                                                Aduan</a>
+                                        </td>
+                                        <% } else { %>
+                                        <td class="text-primary text-capitalize font-weight-bold">Sudah <br>
+                                            diselsaikan
+                                        </td>
+                                        <td>
+                                            <a href="/admin/aduan_lapor/<%=aduan.id%>/edit_aduan"
+                                                class="btn btn-secondary disabled">
+                                                Menyelsaikan Aduan
+                                            </a>
+                                        </td>
+                                        <% } %>
+                                        <td>
+                                            <a class="btn btn-primary btn-action" data-toggle="tooltip" title="Edit"><i
+                                                    class="fas fa-pencil-alt"></i>
+                                            </a>
+                                            <button class="btn btn-danger btn-action"
+                                                onclick="delete_aduan('<%= aduan.id %>')" data-id="<%= aduan.id %>">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="modal fade" id="komentarModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-lg modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Detail Aduan dan Komentar</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="GET">
+                    <div class="form-group">
+                        <label>Nama Pelapor</label>
+                        <input type="text" class="form-control nama" name="nama" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>No Telepon</label>
+                        <input type="text" class="form-control telp_user" name="telp_user" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" class="form-control email" name="email" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Aduan yang diajukan</label>
+                        <input type="text" class="form-control deskripsi_aduan" name="deskripsi_aduan" disabled>
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <label>Penyelsaian Aduan Deskripsi</label>
+                        <textarea class="form-control tanggapan_aduan" rows="1" name="tanggapan_aduan"
+                            name="tanggapan_aduan" disabled></textarea>
+                        <!-- <textarea name="" id="" cols="30" rows="10"></textarea> -->
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <label>Nilai</label>
+                        <input type="text" class="form-control nilai_komentar" name="nilai" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Komentar</label>
+                        <textarea class="form-control deskripsi_komentar" rows="1" name="komentar" disabled></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include ../../partials/footer.ejs %>
+
+<script>
+
+    // function delete_aduan() {
+    //     alert('FUNCTION IS READY!')
+    // }
+
+    function delete_aduan(id) {
+        let idAduan = id;
+        swal({
+            title: "Yakin ingin menghapus data aduan ini?",
+            text: "Data aduan yang dihapus tidak dapat kembali",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+        }).then((willDelete) => {
+            if (willDelete) {
+                swal({
+                    title: 'Informasi',
+                    text: "Success hapus data aduan",
+                    position: 'top-left',
+                    icon: 'success',
+                    buttons: false,
+                    timer: 2000
+                }).then((suksesDelete) => {
+                    window.location.assign(`/admin/aduan_lapor/delete_aduan/${idAduan}/`);
+                })
+            }
+        })
+    }
+
+    $(document).ready(function () {
+        $('#aduan-lapor').on('click', '.detail-aduan', function () {
+            const id = $(this).data('id')
+            const nama = $(this).data('nama');
+            const email = $(this).data('email');
+            const telp_user = $(this).data('nohp');
+            const aduan = $(this).data('aduan');
+            const tanggapan = $(this).data('tanggapan');
+            const nilai = $(this).data('nilai');
+            const komentar = $(this).data('komentar')
+
+            $('#komentarModal').modal('show');
+            $('.id').val(id);
+            $('.nama').val(nama);
+            $('.email').val(email);
+            $('.telp_user').val(telp_user);
+            $('.deskripsi_aduan').val(aduan);
+            $('.tanggapan_aduan').val(tanggapan);
+            $('.nilai_komentar').val(nilai);
+            $('.deskripsi_komentar').val(komentar)
+        });
+    });
+
+</script>
