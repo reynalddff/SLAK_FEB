@@ -22,9 +22,9 @@ module.exports = {
         password: '123456',
         telp_user: '999',
         foto_user: "",
-        RoleId: 1,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        RoleId: 1,
       }, {
         id: 2,
         nama_user: 'Raden Ayu Kartinia',
@@ -33,9 +33,9 @@ module.exports = {
         password: '123456',
         telp_user: '999',
         foto_user: "",
-        RoleId: 1,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        RoleId: 1,
       }, {
         id: 3,
         nama_user: 'Admin',
@@ -44,9 +44,9 @@ module.exports = {
         password: '123456',
         telp_user: '999',
         foto_user: "",
-        RoleId: 2,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        RoleId: 2,
       }, {
         id: 4,
         nama_user: 'Operator Umum',
@@ -55,9 +55,9 @@ module.exports = {
         password: '123456',
         telp_user: '999',
         foto_user: "",
-        RoleId: 3,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        RoleId: 3,
       }, {
         id: 5,
         nama_user: 'Operator Akademik',
@@ -66,9 +66,9 @@ module.exports = {
         password: '123456',
         telp_user: '999',
         foto_user: "",
-        RoleId: 4,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        RoleId: 4,
       }, {
         id: 6,
         nama_user: 'Operator Keuangan',
@@ -77,9 +77,9 @@ module.exports = {
         password: '123456',
         telp_user: '999',
         foto_user: "",
-        RoleId: 5,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        RoleId: 5,
       }, {
         id: 7,
         nama_user: 'Operator Kemahasiswaan',
@@ -88,9 +88,9 @@ module.exports = {
         password: '123456',
         telp_user: '999',
         foto_user: "",
-        RoleId: 6,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        RoleId: 6,
       }, {
         id: 8,
         nama_user: 'Satpam',
@@ -99,9 +99,9 @@ module.exports = {
         password: '123456',
         telp_user: '999',
         foto_user: "",
-        RoleId: 7,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        RoleId: 7,
       }
     ], {});
   },
