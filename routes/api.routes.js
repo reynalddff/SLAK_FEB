@@ -6,7 +6,14 @@ const sequelize = require('sequelize')
 
 const moment = require('moment')
 
-require('express-async-errors')
+require('express-async-errors');
+
+router.get('/roles', async (req, res) => {
+    const role = await Role.findAll({});
+    res.status(200).json({
+        role: role[1].id
+    })
+})
 
 // api users
 router.get('/users', async (req, res) => {
