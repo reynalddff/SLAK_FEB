@@ -26,10 +26,16 @@ router.get('/users', async (req, res) => {
 });
 
 router.post('/users', async (req, res) => {
-    const user = await User.create(req.body);
-    res.status(200).json({
-        user
-    })
+    try {
+        const user = await User.create(req.body);
+        res.status(200).json({
+            user
+        })
+    } catch (error) {
+        res.send({
+            error
+        })
+    }
 });
 
 router.delete('/user/:id', async (req, res) => {

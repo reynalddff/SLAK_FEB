@@ -12,7 +12,7 @@ module.exports = {
         isBetaMember: false
       }], {});
     */
-    const roles = queryInterface.bulkInsert('Roles', [
+    return queryInterface.bulkInsert('Roles', [
       {
         id: 1,
         role: 'user',
@@ -48,12 +48,13 @@ module.exports = {
         role: 'satpam',
         createdAt: new Date(),
         updatedAt: new Date()
+      }, {
+        id: 8,
+        role: 'Kasubbag',
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
     ], {});
-
-    const selectRoles = await queryInterface.sequelize.query(`Select * from Role;`);
-    console.log(selectRoles)
-
     // const users = queryInterface.bulkInsert('Users', [
     //   {
     //     nama_user: 'Ismail Marzuki',
@@ -138,10 +139,6 @@ module.exports = {
     //   //     RoleId: selectRoles[6].id,
     //   //   }
     // ], {});
-
-
-    // return roles, users;
-    return roles;
   },
 
   down: (queryInterface, Sequelize) => {
