@@ -15,10 +15,10 @@
     "operatorsAliases": false
   },
   "production": {
-    "username": "postgres",
-    "password": "kerbaumejus98",
-    "database": "pengajuan-aduan",
-    "host": "localhost",
+    "username": "hjgbjxndbpxzdj",
+    "password": "84a0ad91c4bdf47b80bf8c3b9d71cef9e39680df4abf28995a6a8715005eba08",
+    "database": "damtnggqngobqh",
+    "host": "ec2-34-224-229-81.compute-1.amazonaws.com",
     "dialect": "postgres"
   }
 }
