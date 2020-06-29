@@ -15,7 +15,6 @@ module.exports = {
     */
     return queryInterface.bulkInsert('Users', [
       {
-        id: 1,
         nama_user: 'Ismail Marzuki',
         email: 'ismail123@gmail.com',
         username: 'ismail123',
@@ -26,7 +25,6 @@ module.exports = {
         updatedAt: new Date(),
         RoleId: 1,
       }, {
-        id: 2,
         nama_user: 'Raden Ayu Kartinia',
         email: 'kartini123@gmail.com',
         username: 'kartini123',
@@ -37,7 +35,6 @@ module.exports = {
         updatedAt: new Date(),
         RoleId: 1,
       }, {
-        id: 3,
         nama_user: 'Admin',
         email: 'admin123@gmail.com',
         username: 'admin123',
@@ -48,7 +45,6 @@ module.exports = {
         updatedAt: new Date(),
         RoleId: 2,
       }, {
-        id: 4,
         nama_user: 'Operator Umum',
         email: 'op.umum123@gmail.com',
         username: 'op.umum123',
@@ -59,7 +55,6 @@ module.exports = {
         updatedAt: new Date(),
         RoleId: 3,
       }, {
-        id: 5,
         nama_user: 'Operator Akademik',
         email: 'op.akademik123@gmail.com',
         username: 'op.akademik123',
@@ -70,7 +65,6 @@ module.exports = {
         updatedAt: new Date(),
         RoleId: 4,
       }, {
-        id: 6,
         nama_user: 'Operator Keuangan',
         email: 'op.keuangan123@gmail.com',
         username: 'op.keuangan123',
@@ -81,7 +75,6 @@ module.exports = {
         updatedAt: new Date(),
         RoleId: 5,
       }, {
-        id: 7,
         nama_user: 'Operator Kemahasiswaan',
         email: 'op.kemahasiswaan123@gmail.com',
         username: 'op.kemahasiswaan123',
@@ -92,7 +85,6 @@ module.exports = {
         updatedAt: new Date(),
         RoleId: 6,
       }, {
-        id: 8,
         nama_user: 'Satpam',
         email: 'satpam123@gmail.com',
         username: 'satpam123',
