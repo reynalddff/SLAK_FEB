@@ -15,7 +15,7 @@ module.exports = {
     */
     return queryInterface.bulkInsert('Users', [
       {
-        id: uuid(),
+        id: 1,
         nama_user: 'Ismail Marzuki',
         email: 'ismail123@gmail.com',
         username: 'ismail123',
@@ -26,7 +26,7 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       }, {
-        id: uuid(),
+        id: 2,
         nama_user: 'Raden Ayu Kartinia',
         email: 'kartini123@gmail.com',
         username: 'kartini123',
@@ -37,7 +37,7 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       }, {
-        id: uuid(),
+        id: 3,
         nama_user: 'Admin',
         email: 'admin123@gmail.com',
         username: 'admin123',
@@ -48,7 +48,7 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       }, {
-        id: uuid(),
+        id: 4,
         nama_user: 'Operator Umum',
         email: 'op.umum123@gmail.com',
         username: 'op.umum123',
@@ -59,7 +59,7 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       }, {
-        id: uuid(),
+        id: 5,
         nama_user: 'Operator Akademik',
         email: 'op.akademik123@gmail.com',
         username: 'op.akademik123',
@@ -70,7 +70,7 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       }, {
-        id: uuid(),
+        id: 6,
         nama_user: 'Operator Keuangan',
         email: 'op.keuangan123@gmail.com',
         username: 'op.keuangan123',
@@ -81,7 +81,7 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       }, {
-        id: uuid(),
+        id: 7,
         nama_user: 'Operator Kemahasiswaan',
         email: 'op.kemahasiswaan123@gmail.com',
         username: 'op.kemahasiswaan123',
@@ -92,7 +92,7 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       }, {
-        id: uuid(),
+        id: 8,
         nama_user: 'Satpam',
         email: 'satpam123@gmail.com',
         username: 'satpam123',

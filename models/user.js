@@ -3,12 +3,12 @@ const bcrypt = require('bcryptjs')
 const uploadDir = '/images/';
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-      allowNull: false
-    },
+    // id: {
+    //   type: DataTypes.UUID,
+    //   defaultValue: DataTypes.UUIDV4,
+    //   primaryKey: true,
+    //   allowNull: false
+    // },
     nama_user: {
       type: DataTypes.STRING,
       allowNull: false,
