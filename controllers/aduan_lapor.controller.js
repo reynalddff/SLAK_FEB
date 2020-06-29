@@ -99,6 +99,7 @@ exports.getAduanByTujuan = (req, res) => {
             res.render('operator/aduan_lapor/aduan_lapor', {
                 aduans,
                 nama_user: req.user.nama_user,
+                foto_user: req.user.foto_user,
                 success: req.flash('success')
             });
         }
@@ -115,9 +116,9 @@ exports.getAduan = async (req, res) => {
         }
     });
     if (req.user.RoleId === 2) {
-        res.render('admin/aduan_lapor/aduan_lapor_edit_status', { aduan, nama_user: req.user.nama_user })
+        res.render('admin/aduan_lapor/aduan_lapor_edit_status', { aduan, nama_user: req.user.nama_user, foto_user: req.user.foto_user })
     } else {
-        res.render('operator/aduan_lapor/aduan_lapor_edit_status', { aduan, nama_user: req.user.nama_user })
+        res.render('operator/aduan_lapor/aduan_lapor_edit_status', { aduan, nama_user: req.user.nama_user, foto_user: req.user.foto_user, })
     }
 }
 
