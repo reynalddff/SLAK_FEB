@@ -13,7 +13,7 @@ module.exports = {
         isBetaMember: false
       }], {});
     */
-    return queryInterface.bulkInsert('Roles', [
+    return queryInterface.bulkInsert('Users', [
       {
         id: Sequelize.literal('uuid_generate_v4()'),
         nama_user: 'Ismail Marzuki',
