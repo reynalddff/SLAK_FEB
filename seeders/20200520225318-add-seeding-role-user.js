@@ -51,7 +51,7 @@ module.exports = {
       }
     ], {});
 
-    const selectRoles = queryInterface.sequelize.query(`Select id from ROLES;`, {});
+    const selectRoles = queryInterface.sequelize.query(`Select * from ROLES;`, {});
 
 
     const users = queryInterface.bulkInsert('Users', [
