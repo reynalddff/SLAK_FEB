@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: async (queryInterface, Sequelize) => {
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
@@ -51,8 +51,8 @@ module.exports = {
       }
     ], {});
 
-    const selectRoles = queryInterface.sequelize.query(`Select * from ROLES;`, {});
-
+    const selectRoles = await queryInterface.sequelize.query(`Select * from Role;`);
+    console.log(selectRoles)
 
     const users = queryInterface.bulkInsert('Users', [
       {
@@ -75,70 +75,72 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
         RoleId: selectRoles[0].id,
-      }, {
-        nama_user: 'Admin Ganteng',
-        email: 'admin123@gmail.com',
-        username: 'admin.ganteng123',
-        password: '123456',
-        telp_user: '999',
-        foto_user: "",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        RoleId: selectRoles[1].id,
-      }, {
-        nama_user: 'Operator Umum',
-        email: 'op.umum123@gmail.com',
-        username: 'op.umum123',
-        password: '123456',
-        telp_user: '999',
-        foto_user: "",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        RoleId: selectRoles[2].id,
-      }, {
-        nama_user: 'Operator Akademik',
-        email: 'op.akademik123@gmail.com',
-        username: 'op.akademik123',
-        password: '123456',
-        telp_user: '999',
-        foto_user: "",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        RoleId: selectRoles[3].id,
-      }, {
-        nama_user: 'Operator Keuangan',
-        email: 'op.keuangan123@gmail.com',
-        username: 'op.keuangan123',
-        password: '123456',
-        telp_user: '999',
-        foto_user: "",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        RoleId: selectRoles[4].id,
-      }, {
-        nama_user: 'Operator Kemahasiswaan',
-        email: 'op.kemahasiswaan123@gmail.com',
-        username: 'op.kemahasiswaan123',
-        password: '123456',
-        telp_user: '999',
-        foto_user: "",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        RoleId: selectRoles[5].id,
-      }, {
-        nama_user: 'Satpam',
-        email: 'satpam123@gmail.com',
-        username: 'satpam123',
-        password: '123456',
-        telp_user: '999',
-        foto_user: "",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        RoleId: selectRoles[6].id,
-      }
+      },
+      // {
+      //     nama_user: 'Admin Ganteng',
+      //     email: 'admin123@gmail.com',
+      //     username: 'admin.ganteng123',
+      //     password: '123456',
+      //     telp_user: '999',
+      //     foto_user: "",
+      //     createdAt: new Date(),
+      //     updatedAt: new Date(),
+      //     RoleId: selectRoles[1].id,
+      //   }, {
+      //     nama_user: 'Operator Umum',
+      //     email: 'op.umum123@gmail.com',
+      //     username: 'op.umum123',
+      //     password: '123456',
+      //     telp_user: '999',
+      //     foto_user: "",
+      //     createdAt: new Date(),
+      //     updatedAt: new Date(),
+      //     RoleId: selectRoles[2].id,
+      //   }, {
+      //     nama_user: 'Operator Akademik',
+      //     email: 'op.akademik123@gmail.com',
+      //     username: 'op.akademik123',
+      //     password: '123456',
+      //     telp_user: '999',
+      //     foto_user: "",
+      //     createdAt: new Date(),
+      //     updatedAt: new Date(),
+      //     RoleId: selectRoles[3].id,
+      //   }, {
+      //     nama_user: 'Operator Keuangan',
+      //     email: 'op.keuangan123@gmail.com',
+      //     username: 'op.keuangan123',
+      //     password: '123456',
+      //     telp_user: '999',
+      //     foto_user: "",
+      //     createdAt: new Date(),
+      //     updatedAt: new Date(),
+      //     RoleId: selectRoles[4].id,
+      //   }, {
+      //     nama_user: 'Operator Kemahasiswaan',
+      //     email: 'op.kemahasiswaan123@gmail.com',
+      //     username: 'op.kemahasiswaan123',
+      //     password: '123456',
+      //     telp_user: '999',
+      //     foto_user: "",
+      //     createdAt: new Date(),
+      //     updatedAt: new Date(),
+      //     RoleId: selectRoles[5].id,
+      //   }, {
+      //     nama_user: 'Satpam',
+      //     email: 'satpam123@gmail.com',
+      //     username: 'satpam123',
+      //     password: '123456',
+      //     telp_user: '999',
+      //     foto_user: "",
+      //     createdAt: new Date(),
+      //     updatedAt: new Date(),
+      //     RoleId: selectRoles[6].id,
+      //   }
     ], {});
 
 
+    // return roles, users;
     return roles, users;
   },
 
