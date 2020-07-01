@@ -64,7 +64,15 @@
                                             <a href="/aduan_lapor/komentar" class="btn btn-secondary disabled">Berikan
                                                 Komentar</a>
                                         </td>
-                                        <% } else { %>
+                                        <% } else if (aduan.status_aduan === 'sudah' && aduan.Komentar.deskripsi_komentar === '-') { %>
+                                        <td class="text-primary text-capitalize font-weight-bold">Sudah <br> diselsaikan
+                                        </td>
+                                        <td>
+                                            <a href="/karyawan/aduan_lapor/komentar/<%= aduan.id %>"
+                                                class="btn btn-primary">Berikan
+                                                Komentar</a>
+                                        </td>
+                                        <% } else if (aduan.status_aduan === 'sudah' && aduan.Komentar.deskripsi_komentar !== '-') { %>
                                         <td class="text-primary text-capitalize font-weight-bold">Sudah <br> diselsaikan
                                         </td>
                                         <td>

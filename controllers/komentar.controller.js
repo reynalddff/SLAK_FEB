@@ -65,5 +65,5 @@ exports.getDeskripsiKomentar = async (req, res) => {
         }
     })
 
-    res.render('karyawan/aduan_lapor/aduan_lapor_komentar', { aduan, nama_user: req.user.nama_user, })
+    res.render('karyawan/aduan_lapor/aduan_lapor_komentar', { aduan, nama_user: req.user.nama_user, foto_user: req.user.foto_user })
 }

@@ -27,16 +27,17 @@
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-hands-helping"></i> <span>Permintaan
                         Layanan</span></a>
                 <ul class=" dropdown-menu">
-                    <li><a class="nav-link" href="pinjam_kunci.html">Peminjaman Kunci</a></li>
+                    <li><a class="nav-link" href="/admin/pinjam_kunci/validasi_pinjam_kunci">Peminjaman Kunci</a></li>
                     <li class="<% if (current_url == '/admin/aduan_hilang') {%>active<% } %>">
-                        <a class="nav-link" href="/admin/aduan_hilang">
+                        <a class="nav-link" href="/admin/aduan_hilang/validasi_satpam">
                             Pengaduan Barang Hilang
                         </a>
                     </li>
                 </ul>
             </li>
             <li class="menu-header">Survey</li>
-            <li><a class="nav-link" href="survey.html"><i class="far fa-smile"></i> <span>Survey</span></a>
+            <li><a class="nav-link" onclick="alert('Fungsi ini belum tersedia')"><i class="far fa-smile"></i>
+                    <span>Survey</span></a>
             </li>
             <li class="menu-header">User</li>
             <li class="<% if (current_url == '/admin/manajemen_user') { %>

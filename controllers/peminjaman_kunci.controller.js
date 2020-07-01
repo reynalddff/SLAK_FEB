@@ -120,8 +120,12 @@ exports.validasiPinjamKunci = async (req, res) => {
             status_peminjaman: 'dipinjam'
         });
         await kunci.update({ status_kunci: "dipinjam" })
-        req.flash('success', 'Peminjaman kunci berhasil divalidasi')
-        res.redirect('/satpam/pinjam_kunci/validasi_pinjam_kunci');
+        req.flash('success', 'Peminjaman kunci berhasil divalidasi');
+        if (req.user.RoleId === 7) {
+            res.redirect('/satpam/pinjam_kunci/validasi_pinjam_kunci');
+        } else if (req.user.RoleId === 2) {
+            res.redirect('/admin/pinjam_kunci/validasi_pinjam_kunci');
+        }
     } else {
         res.status(200).send({
             status: 'Failed',
@@ -144,7 +148,11 @@ exports.tolakPinjamKunci = async (req, res) => {
         });
         await kunci.update({ status_kunci: "tersedia" });
         req.flash('failed', 'Peminjaman kunci berhasil ditolak.')
-        res.redirect('/satpam/pinjam_kunci/validasi_pinjam_kunci');
+        if (req.user.RoleId === 7) {
+            res.redirect('/satpam/pinjam_kunci/validasi_pinjam_kunci');
+        } else if (req.user.RoleId === 2) {
+            res.redirect('/admin/pinjam_kunci/validasi_pinjam_kunci');
+        }
     } else {
         res.status(200).send({
             status: 'Failed',
@@ -161,9 +169,12 @@ exports.validasiKembaliKunci = async (req, res) => {
             msg: 'peminjaman kunci yang dicari tidak ditemukan'
         });
     }
-
     await kunci.update({ status_kunci: 'tersedia' });
-    const pengembalianKunci = await pinjam_kunci.update({ status_peminjaman: 'dikembalikan' });
-    req.flash('success', 'Pengembalian kunci berhasil divalidasi')
-    res.redirect('/satpam/pinjam_kunci/validasi_kembali_kunci');
+    await pinjam_kunci.update({ status_peminjaman: 'dikembalikan' });
+    req.flash('success', 'Pengembalian kunci berhasil divalidasi');
+    if (req.user.RoleId === 7) {
+        res.redirect('/satpam/pinjam_kunci/validasi_kembali_kunci');
+    } else if (req.user.RoleId === 2) {
+        res.redirect('/admin/pinjam_kunci/validasi_kembali_kunci');
+    }
 }

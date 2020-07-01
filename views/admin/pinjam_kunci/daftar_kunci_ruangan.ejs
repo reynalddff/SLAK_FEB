@@ -1,0 +1,163 @@
+<%- include ../../partials/admin_layout/header.ejs %>
+<%- include ../../partials/admin_layout/sidebar.ejs %>
+
+<!-- Main Content -->
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Permintaan Layanan: Pinjam Kunci</h1>
+        </div>
+        <ul class="nav nav-pills mb-4">
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/pinjam_kunci/validasi_pinjam_kunci">Peminjaman Kunci Ruangan </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/pinjam_kunci/validasi_kembali_kunci">Pengembalian Kunci Ruangan</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/admin/pinjam_kunci/daftar_kunci">Daftar Kunci Ruangan <i
+                        class="fas fa-key"></i></a>
+            </li>
+        </ul>
+        <% if (success.length > 0) { %>
+        <div class="alert alert-primary alert-has-icon alert-dismissible show fade">
+            <div class="alert-icon"><i class="fas fa-thumbs-up"></i></div>
+            <div class="alert-body">
+                <button class="close" data-dismiss="alert">
+                    <span>×</span>
+                </button>
+                <div class="alert-title">Success</div>
+                <%= success %>
+            </div>
+        </div>
+        <% } %>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h4>Daftar Seluruh Kunci Ruangan</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Pake modal -->
+                        <a href="/admin/pinjam_kunci/tambah_kunci/form" style="float:left"
+                            class="btn btn-success mb-4">Tambah
+                            Kunci Ruangan
+                            <i class="fas fa-plus"></i>
+                        </a>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Ruangan</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- <tr>
+                                        <th scope="row">1</th>
+                                        <td>Mark</td>
+                                        <td>Otto</td>
+                                        <td>@mdo</td>
+                                        <td>
+                                            <a class="btn btn-primary btn-action" data-toggle="tooltip" title="Edit"><i
+                                                    class="fas fa-pencil-alt"></i></a>
+                                            <a class="btn btn-danger btn-action" data-toggle="tooltip" title="Delete"
+                                                data-confirm="Are You Sure?|This action can not be undone. Do you want to continue?"
+                                                data-confirm-yes="alert('Deleted')"><i class="fas fa-trash"></i></a>
+                                        </td>
+                                    </tr> -->
+                                    <% kunci.forEach((kunci, index) => { %>
+                                    <tr>
+                                        <td> <%= index + 1 %> </td>
+                                        <td><%= kunci.nama_ruangan %></td>
+                                        <% if (kunci.status_kunci === "tersedia") {  %>
+                                        <td>
+                                            <div class="badge badge-primary">Tersedia</div>
+                                        </td>
+                                        <td>
+                                            <a href="/admin/pinjam_kunci/edit_kunci/<%= kunci.id %>"
+                                                class="btn btn-primary btn-action" data-toggle="tooltip" title="Edit"><i
+                                                    class="fas fa-pencil-alt"></i></a>
+                                            <a class="btn btn-danger btn-action delete-btn" data-toggle="tooltip"
+                                                title="Delete" onclick="delete_kunci('<%= kunci.id %>')">
+                                                <i class="fas fa-trash"></i></a>
+                                        </td>
+                                        <% } else if (kunci.status_kunci === "renovasi") { %>
+                                        <td>
+                                            <div class="badge badge-warning">Renovasi</div>
+                                        </td>
+                                        <td>
+                                            <a href="/admin/pinjam_kunci/edit_kunci/<%= kunci.id %>"
+                                                class="btn btn-primary btn-action" data-toggle="tooltip" title="Edit"><i
+                                                    class="fas fa-pencil-alt"></i></a>
+                                            <a class="btn btn-danger btn-action delete-btn" data-toggle="tooltip"
+                                                title="Delete" onclick="delete_kunci('<%= kunci.id %>')">
+                                                <i class="fas fa-trash"></i></a>
+                                        </td>
+                                        <% } else if (kunci.status_kunci === "dipinjam") { %>
+                                        <td>
+                                            <div class="badge badge-danger">Dipinjam</div>
+                                        </td>
+                                        <td>
+                                            <a href="/admin/pinjam_kunci/edit_kunci/<%= kunci.id %>"
+                                                class="btn btn-primary btn-action" data-toggle="tooltip" title="Edit"><i
+                                                    class="fas fa-pencil-alt"></i></a>
+                                            <a class="btn btn-danger btn-action delete-btn" data-toggle="tooltip"
+                                                title="Delete" onclick="delete_kunci('<%= kunci.id %>')">
+                                                <i class="fas fa-trash"></i></a>
+                                        </td>
+                                        <% } else { %>
+                                        <td>
+                                            <div class="badge badge-dark">Tidak Tersedia</div>
+                                        </td>
+                                        <td>
+                                            <a href="/admin/pinjam_kunci/edit_kunci/<%= kunci.id %>"
+                                                class="btn btn-primary btn-action" data-toggle="tooltip" title="Edit"><i
+                                                    class="fas fa-pencil-alt"></i></a>
+                                            <a class="btn btn-danger btn-action delete-btn" data-toggle="tooltip"
+                                                title="Delete" onclick="delete_kunci('<%= kunci.id %>')">
+                                                <i class="fas fa-trash"></i></a>
+                                        </td>
+                                        <% }  %>
+                                    </tr>
+                                    <%})%>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<%- include ../../partials/footer.ejs %>
+
+<script>
+    function delete_kunci(id) {
+        let idKunci = id;
+        swal({
+            title: "Yakin ingin menghapus data aduan ini?",
+            text: "Data aduan yang dihapus tidak dapat kembali",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+        }).then((willDelete) => {
+            if (willDelete) {
+                swal({
+                    title: 'Informasi',
+                    text: "Success hapus data aduan",
+                    position: 'top-left',
+                    icon: 'success',
+                    buttons: false,
+                    timer: 2000
+                }).then((suksesDelete) => {
+                    window.location.assign(`/admin/pinjam_kunci/delete_kunci/${idKunci}/`);
+                })
+            }
+        })
+    }
+
+</script>

@@ -22,6 +22,15 @@ exports.getAduanKehilangan = async (req, res) => {
     }
 }
 
+exports.getAduanKehilangan2 = async (req, res) => {
+    if (req.user.RoleId === 2) {
+        const aduan = await Aduan_Hilang.findAll({
+            include: [{ model: User }]
+        });
+        res.render('admin/aduan_hilang/validasi_aduan_barang_hilang', { aduan, success: req.flash('success'), error: req.flash('error'), foto_user: req.user.foto_user, nama_user: req.user.nama_user, })
+    }
+}
+
 exports.updateContactProfile3 = async (req, res) => {
     const { telp_user, email } = req.body;
     try {
@@ -74,12 +83,20 @@ exports.validasiSatpamAduan = async (req, res) => {
     const aduan = await Aduan_Hilang.findOne({ where: { id } });
     if (!aduan) {
         req.flash('error', 'Aduan tidak ditemukan');
-        res.redirect('/satpam/aduan_hilang');
+        if (req.user.RoleId === 2) {
+            res.redirect('/satpam/aduan_hilang');
+        } else if (req.user.RoleId === 7) {
+            res.redirect('/admin/aduan_hilang');
+        }
     }
 
     await aduan.update({ status_aduan: "menunggu validasi admin / kasubbag" });
     req.flash('success', 'Aduan berhasil divalidasi');
-    res.redirect('/satpam/aduan_hilang');
+    if (req.user.RoleId === 2) {
+        res.redirect('/admin/aduan_hilang');
+    } else if (req.user.RoleId === 7) {
+        res.redirect('/satpam/aduan_hilang');
+    }
 }
 
 exports.validasiAdminAduan = async (req, res) => {
@@ -92,7 +109,11 @@ exports.validasiAdminAduan = async (req, res) => {
 
     await aduan.update({ status_aduan: "divalidasi" });
     req.flash('success', 'Aduan berhasil divalidasi');
-    res.redirect('/admin/aduan_hilang');
+    if (req.user.RoleId === 2) {
+        res.redirect('/admin/aduan_hilang/validasi_admin');
+    } else if (req.user.RoleId === 8) {
+        res.redirect('/kasubbag/aduan_hilang/validasi_admin');
+    }
 }
 
 exports.validasi

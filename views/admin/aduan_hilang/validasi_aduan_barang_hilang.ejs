@@ -9,14 +9,15 @@
         </div>
         <ul class="nav nav-pills mb-4">
             <li class="nav-item">
-                <a class="nav-link active" href="/admin/aduan_hilang/validasi_satpam">Verifikasi Aduan Hilang
+                <a class="nav-link" href="/admin/aduan_hilang/validasi_satpam">Verifikasi Aduan Hilang
                     (Satpam)
-                    <i class="fas fa-key"></i>
+
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/admin/aduan_hilang/validasi_admin">Validasi Aduan Hilang
-                    (Kasubbag)
+                <a class="nav-link active" href="/admin/aduan_hilang/validasi_admin">Validasi Aduan Hilang
+                    (Kasubbag / Admin)
+                    <i class="fas fa-key"></i>
                 </a>
             </li>
             </li>
@@ -62,7 +63,6 @@
                                         <th scope="col">Lokasi Hilang</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Verifkasi</th>
-                                        <th scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -82,29 +82,23 @@
                                         </td>
                                         <td><%= aduan.deskripsi_aduan %></td>
                                         <td><%= aduan.lokasi_aduan %></td>
-                                        <% if(aduan.status_aduan === 'menunggu validasi satpam') { %>
+                                        <% if(aduan.status_aduan === 'menunggu validasi admin / kasubbag') { %>
                                         <td class="text-warning font-weight-bold text-capitalize">
-                                            <%= aduan.status_aduan %></td>
-                                        <td><button onclick="validasi_aduan('<%= aduan.id %>')"
+                                            <%= aduan.status_aduan %>
+                                        </td>
+                                        <td>
+                                            <button onclick="validasi_aduan('<%= aduan.id %>')"
                                                 class="btn btn-success">Verifikasi
                                                 Aduan
                                             </button>
                                         </td>
-                                        <td><a class="btn btn-secondary disabled btn-action" aria-disabled=""
-                                                data-toggle="tooltip" title="Print Aduan"><i
-                                                    class="fas fa-print"></i></a>
-                                        </td>
-                                        <% } else if (aduan.status_aduan === 'menunggu validasi admin / kasubbag') { %>
+                                        <% } else if (aduan.status_aduan === 'menunggu validasi satpam') { %>
                                         <td class="text-warning font-weight-bold text-capitalize">
                                             <%= aduan.status_aduan %>
                                         </td>
                                         <td><a href="pengajuan_aduan_komentar.html"
                                                 class="btn btn-secondary disabled">Verifikasi
                                                 Aduan</a>
-                                        </td>
-                                        <td><a class="btn btn-secondary disabled btn-action" aria-disabled=""
-                                                data-toggle="tooltip" title="Print Aduan"><i
-                                                    class="fas fa-print"></i></a>
                                         </td>
                                         <% } else {%>
                                         <td class="text-primary font-weight-bold text-capitalize">
@@ -113,11 +107,6 @@
                                         <td><a href="pengajuan_aduan_komentar.html"
                                                 class="btn btn-secondary disabled">Verifikasi
                                                 Aduan</a>
-                                        </td>
-                                        <td><a class="btn btn-dark btn-action" data-toggle="tooltip" title="Print Aduan"
-                                                onclick="alert('fungsi ini belum tersedia')">
-                                                <i class="fas fa-print"></i>
-                                            </a>
                                         </td>
                                         <% } %>
                                     </tr>
@@ -200,7 +189,7 @@
                     buttons: false,
                     timer: 2000
                 }).then((suksesDelete) => {
-                    window.location.assign(`/admin/aduan_hilang/validasi_satpam/${idAduan}`);
+                    window.location.assign(`/admin/aduan_hilang/validasi_admin/${idAduan}`);
                 })
             }
         })
