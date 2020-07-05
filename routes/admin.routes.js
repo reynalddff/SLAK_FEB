@@ -57,8 +57,8 @@ router.get('/', async (req, res, next) => {
 // Edit Profile
 router.get('/edit_profile', getProfile);
 router.get('/edit_account', getAccount);
-router.post('/edit_profile', editAccount);
-router.post('/edit_account', upload.single('foto_user'), editProfile)
+router.post('/edit_account', editAccount)
+router.post('/edit_profile', upload.single('foto_user'), editProfile);
 
 // aduan lapor
 router.get('/aduan_lapor', getAllAduan);
