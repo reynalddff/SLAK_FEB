@@ -1,35 +1,54 @@
-<%- include ../../partials/admin_layout/header.ejs %>
-<%- include ../../partials/admin_layout/sidebar.ejs %>
+<%- include ../../partials/admin_layout/header.ejs %> <%- include
+../../partials/admin_layout/sidebar.ejs %>
 
 <!-- Main Content -->
 <div class="main-content">
-    <section class="section">
-        <div class="section-header">
-            <h1>Manajemen User</h1>
-        </div>
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12">
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h4>Form Tambah User</h4>
-                    </div>
-                    <div class="card-body">
-                        <form action="/admin/pinjam_kunci/tambah_kunci" method="POST">
-                            <div class="form-group">
-                                <label>Nama Ruangan</label>
-                                <input type="text" class="form-control" required name="nama_ruangan">
-                            </div>
-                            <div class="form-group">
-                                <label>Status Kunci</label>
-                                <select class="form-control text-capitalize" name="status_kunci" required>
-                                    <option value="" class="text-capitalize">--Pilih Status Kunci--</option>
-                                    <option class="text-capitalize" value="tersedia">Tersedia</option>
-                                    <option class="text-capitalize" value="renovasi">Renovasi</option>
-                                    <option class="text-capitalize" value="tidak tersedia">Tidak Tersedia</option>
-                                    <option class="text-capitalize" value="dipinjam">Dipinjam</option>
-                                </select>
-                            </div>
-                            <!-- <div class="form-group">
+  <section class="section">
+    <div class="section-header">
+      <h1>Tambah Kunci Ruangan</h1>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h4>Form Tambah Kunci</h4>
+          </div>
+          <div class="card-body">
+            <form action="/admin/pinjam_kunci/tambah_kunci" method="POST">
+              <div class="form-group">
+                <label>Nama Ruangan</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  required
+                  name="nama_ruangan"
+                />
+              </div>
+              <div class="form-group">
+                <label>Status Kunci</label>
+                <select
+                  class="form-control text-capitalize"
+                  name="status_kunci"
+                  required
+                >
+                  <option value="" class="text-capitalize"
+                    >--Pilih Status Kunci--</option
+                  >
+                  <option class="text-capitalize" value="tersedia"
+                    >Tersedia</option
+                  >
+                  <option class="text-capitalize" value="renovasi"
+                    >Renovasi</option
+                  >
+                  <option class="text-capitalize" value="tidak tersedia"
+                    >Tidak Tersedia</option
+                  >
+                  <option class="text-capitalize" value="dipinjam"
+                    >Dipinjam</option
+                  >
+                </select>
+              </div>
+              <!-- <div class="form-group">
                                 <label for="">Foto Profil</label>
                                 <div class="custom-file">
                                     <input type="file" class="custom-file-input" id="inputGroupFile01"
@@ -38,15 +57,21 @@
                                         file</label>
                                 </div>
                             </div> -->
-                            <button class="btn btn-primary" style="float: right;">Tambah Kunci</button>
-                            <a href="/admin/pinjam_kunci/daftar_kunci" class="btn btn-dark mr-3"
-                                style="float: right;">Kembali</a>
-                        </form>
-                    </div>
-                </div>
-            </div>
+              <button class="btn btn-primary" style="float: right;">
+                Tambah Kunci
+              </button>
+              <a
+                href="/admin/pinjam_kunci/daftar_kunci"
+                class="btn btn-dark mr-3"
+                style="float: right;"
+                >Kembali</a
+              >
+            </form>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 </div>
 
 <%- include ../../partials/footer.ejs %>

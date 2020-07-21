@@ -117,3 +117,17 @@
 </div>
 
 <%- include ../partials/footer.ejs %>
+
+<script>
+    if ("geolocation" in navigator) {
+        console.log("Geolocation is available");
+        navigator.geolocation.getCurrentPosition((position) => {
+            const lat = position.coords.latitude;
+            const long = position.coords.longitude;
+            const data = { lat, long };
+            console.log(data.lat, data.long)
+        });
+    } else {
+        console.log("Geolocation is not available");
+    }
+</script>

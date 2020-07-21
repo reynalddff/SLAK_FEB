@@ -52,7 +52,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover" id="pinjam-kunci">
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
@@ -61,7 +61,7 @@
                                         <th scope="col">Ruangan</th>
                                         <th scope="col">Tanggal Pinjam</th>
                                         <th scope="col">Action</th>
-                                        <!-- <th scope="col">Tolak</th> -->
+                                        <th scope="col">QR Code</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -73,12 +73,6 @@
                                         <td><%= pinjam.Kunci.nama_ruangan %></td>
                                         <td><%= pinjam.tanggal_pinjam %></td>
                                         <td>
-                                            <!-- <form action="/satpam/pinjam_kunci/validasi_pinjam_kunci/<%= pinjam.id %>"
-                                                method="post">
-                                                <button class="btn btn-success">
-                                                    Validasi Peminjaman
-                                                </button>
-                                            </form> -->
                                             <a class="btn btn-success btn-action" data-toggle="tooltip" title="Validasi"
                                                 onclick="validasi_kunci('<%= pinjam.id %>')">Validasi
                                             </a>
@@ -86,16 +80,18 @@
                                                 onclick="tolak_kunci('<%= pinjam.id %>')">Tolak
                                             </a>
                                         </td>
-                                        <!-- <td>
-                                            <form action="/satpam/pinjam_kunci/tolak_pinjam_kunci/<%= pinjam.id %>"
-                                                method="post">
-                                                <button class="btn btn-danger">Tolak Peminjaman</button>
-                                            </form>
-                                            <a href="/satpam/pinjam_kunci/tolak_pinjam_kunci/<%= pinjam.id %>"
-                                                class="btn btn-danger btn-action" data-toggle="tooltip"
-                                                title="Edit">Tolak
+                                        <td>
+                                            <a href="#QRCodeGenerator" data-toggle="modal" data-id="<%= pinjam.id %>"
+                                                data-tanggal_pinjam="<%= pinjam.tanggal_pinjam %>"
+                                                data-tanggal_kembali="<%= pinjam.tanggal_kembali %>"
+                                                data-nama_user="<%= pinjam.User.nama_user %>"
+                                                data-telp_user="<%= pinjam.User.telp_user %>"
+                                                data_kunci="<%= pinjam.Kunci.nama_ruangan %>"
+                                                data-target="#QRCodeGenerator" id="qrcode-pinjam-kunci"
+                                                class="btn btn-dark">
+                                                <i class="fas fa-qrcode"></i>
                                             </a>
-                                        </td> -->
+                                        </td>
                                     </tr>
                                     <% }) %>
                                 </tbody>
@@ -107,6 +103,26 @@
         </div>
     </section>
 </div>
+
+<div class="modal fade" id="QRCodeGenerator" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-lg modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">QRCode Peminjaman Kunci</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="qrcode" class="text-center"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <%- include ../../partials/footer.ejs %>
 <script>
     function tolak_kunci(id) {
@@ -156,4 +172,27 @@
             }
         })
     }
+
+    $(document).ready(function () {
+        let qrcode = new QRCode(document.querySelector('#qrcode'), {
+            width: 250,
+            height: 250,
+            colorDark: "#000000",
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        $('#pinjam-kunci').on('click', '#qrcode-pinjam-kunci', function () {
+            const id = $(this).data('id')
+            const tanggal_pinjam = $(this).data('tanggal_pinjam');
+            const tanggal_kembali = $(this).data('tanggal_kembali');
+            const nama_user = $(this).data('nama_user');
+            const telp_user = $(this).data('telp_user');
+            const kunci = $(this).data('kunci');
+
+            $('#QRCodeGenerator').modal('show');
+
+            qrcode.makeCode(`nama peminjam: ${nama_user} & no teleponnya: ${telp_user} pada tanggal: ${tanggal_pinjam} `);
+        });
+    });
 </script>

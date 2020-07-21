@@ -85,14 +85,13 @@
                                         <% if(aduan.status_aduan === 'menunggu validasi satpam') { %>
                                         <td class="text-warning font-weight-bold text-capitalize">
                                             <%= aduan.status_aduan %></td>
-                                        <td><button onclick="validasi_aduan('<%= aduan.id %>')"
+                                        <td><a href="/admin/aduan_hilang/form/<%= aduan.id %>"
                                                 class="btn btn-success">Verifikasi
                                                 Aduan
-                                            </button>
+                                            </a>
                                         </td>
-                                        <td><a class="btn btn-secondary disabled btn-action" aria-disabled=""
-                                                data-toggle="tooltip" title="Print Aduan"><i
-                                                    class="fas fa-print"></i></a>
+                                        <td><a class="btn btn-secondary disabled btn-action" aria-disabled=""> Print
+                                                <i class="fas fa-print"></i></a>
                                         </td>
                                         <% } else if (aduan.status_aduan === 'menunggu validasi admin / kasubbag') { %>
                                         <td class="text-warning font-weight-bold text-capitalize">
@@ -102,9 +101,8 @@
                                                 class="btn btn-secondary disabled">Verifikasi
                                                 Aduan</a>
                                         </td>
-                                        <td><a class="btn btn-secondary disabled btn-action" aria-disabled=""
-                                                data-toggle="tooltip" title="Print Aduan"><i
-                                                    class="fas fa-print"></i></a>
+                                        <td><a class="btn btn-secondary disabled btn-action" aria-disabled=""> Print
+                                                <i class="fas fa-print"></i></a>
                                         </td>
                                         <% } else {%>
                                         <td class="text-primary font-weight-bold text-capitalize">
@@ -114,8 +112,8 @@
                                                 class="btn btn-secondary disabled">Verifikasi
                                                 Aduan</a>
                                         </td>
-                                        <td><a class="btn btn-dark btn-action" data-toggle="tooltip" title="Print Aduan"
-                                                onclick="alert('fungsi ini belum tersedia')">
+                                        <td><a class="btn btn-dark btn-action"
+                                                onclick="alert('fungsi ini belum tersedia')"> Print
                                                 <i class="fas fa-print"></i>
                                             </a>
                                         </td>

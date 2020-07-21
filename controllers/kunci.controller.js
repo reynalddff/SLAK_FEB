@@ -1,20 +1,38 @@
 const express = require('express');
 const router = express.Router();
 
-const { User, Kunci, Peminjaman_Kunci } = require('../models');
+const { User, Kunci, Peminjaman_Kunci, Notifications } = require('../models');
 
 exports.getAllKunci = async (req, res) => {
     const kunci = await Kunci.findAll({});
     if (req.user.RoleId === 7) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: '7'
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('satpam/pinjam_kunci/daftar_kunci_ruangan', {
             kunci,
+            notifications,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
             foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 2) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: ['7', '3', '4', '5', '6']
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('admin/pinjam_kunci/daftar_kunci_ruangan', {
             kunci,
+            notifications,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
             foto_user: req.user.foto_user
@@ -24,12 +42,30 @@ exports.getAllKunci = async (req, res) => {
 
 exports.renderFormTambah = async (req, res) => {
     if (req.user.RoleId === 7) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: '7'
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('satpam/pinjam_kunci/tambah_kunci', {
+            notifications,
             nama_user: req.user.nama_user,
             foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 2) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: ['7', '3', '4', '5', '6']
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('admin/pinjam_kunci/tambah_kunci', {
+            notifications,
             nama_user: req.user.nama_user,
             foto_user: req.user.foto_user
         })
@@ -58,13 +94,29 @@ exports.renderFormEdit = async (req, res) => {
             res.redirect('/admin/pinjam_kunci/daftar_kunci')
         }
     }
-    if (req.user.roleId === 7) {
+    if (req.user.RoleId === 7) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: '7'
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('satpam/pinjam_kunci/edit_kunci', {
-            kunci, nama_user: req.user.nama_user, foto_user: req.user.foto_user
+            kunci, notifications, nama_user: req.user.nama_user, foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 2) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: ['7', '3', '4', '5', '6']
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('admin/pinjam_kunci/edit_kunci', {
-            kunci, nama_user: req.user.nama_user, foto_user: req.user.foto_user
+            kunci, nama_user: req.user.nama_user, foto_user: req.user.foto_user, notifications
         })
     }
 }

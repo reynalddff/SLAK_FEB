@@ -8,13 +8,43 @@
             <h1>Pengajuan Aduan</h1>
         </div>
         <div class="row">
+
+            <div class="col-lg-12 col-md-6 col-sm-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h4>Penyelsaian Aduan</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/admin/aduan_lapor/<%=aduan.id%>/edit_aduan"
+                            enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label>Penyelsaian Aduan Deskripsi</label>
+                                <textarea class="form-control" rows="1" name="tanggapan_aduan" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleFormControlFile1">Input Photo</label>
+                                <input type="file" name="tanggapan_foto" class="form-control-file"
+                                    id="exampleFormControlFile1" required>
+                                <small>Foto harus memiliki format JPG/PNG/JPEG dan maksimal
+                                    ukuran 10 MB</small>
+                            </div>
+                            <button class="btn btn-primary" style="float: right;">
+                                Edit Status Aduan
+                            </button>
+                            <a href="/operator/aduan_lapor" class="btn btn-dark mr-3" style="float: right;">Kembali</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
             <div class="col-lg-6 col-md-6 col-sm-12">
                 <div class="card card-primary">
                     <div class="card-header">
                         <h4>Daftar Pengajuan Aduan Masuk</h4>
                     </div>
                     <div class="card-body">
-                        <form method="get">
+                        <form action="post">
+                            <input type="hidden" class="form-control" id="latitude" value="<%= aduan.latitude %>">
+                            <input type="hidden" class="form-control" id="longitude" value="<%= aduan.longitude %>">
                             <div class="form-group">
                                 <label>Nama</label>
                                 <input type="text" class="form-control" value="<%= aduan.User.nama_user %>" disabled>
@@ -37,27 +67,19 @@
                                     disabled></textarea>
                                 <!-- <textarea name="" id="" cols="30" rows="10"></textarea> -->
                             </div>
+                            <% if (aduan.foto_aduan) { %>
                             <div class="row">
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="gallery gallery-fw" data-item-height="150">
-                                        <div class="gallery-item" data-image="/images/news/img03.jpg"
-                                            data-title="Image 1"></div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-6 col-sm-12">
-                                    <div class="gallery gallery-fw" data-item-height="150">
-                                        <div class="gallery-item" data-image="/images/news/img07.jpg"
-                                            data-title="Image 2"></div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-6 col-sm-12">
-                                    <div class="gallery gallery-fw" data-item-height="150">
-                                        <div class="gallery-item" data-image="/images/news/img05.jpg"
+                                        <div class="gallery-item" data-image="<%= aduan.foto_aduan %>"
                                             data-title="Image 3"></div>
                                     </div>
                                 </div>
                             </div>
-                            <a href="/admin/aduan_lapor" class="btn btn-dark" style="float: right;">Kembali</a>
+                            <% } else { %>
+                            <h5>Tidak ada foto</h5>
+                            <% } %>
+
                         </form>
                     </div>
                 </div>
@@ -65,27 +87,15 @@
             <div class="col-lg-6 col-md-6 col-sm-12">
                 <div class="card card-primary">
                     <div class="card-header">
-                        <h4>Penyelsaian Aduan</h4>
+                        <h4>Lokasi aduan</h4>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="/admin/aduan_lapor/<%=aduan.id%>/edit_aduan">
+                        <form action="">
                             <div class="form-group">
-                                <label>Penyelsaian Aduan Deskripsi</label>
-                                <textarea class="form-control" rows="1" name="tanggapan_aduan"></textarea>
-                                <!-- <textarea name="" id="" cols="30" rows="10"></textarea> -->
+                                <label>Lokasi Aduan</label>
+                                <input type="text" class="form-control" value="<%= aduan.lokasi_aduan %>" disabled>
                             </div>
-                            <!-- beluma ada nanti nyusul -->
-                            <!-- <div class="form-group">
-                                <label for="">Upload Bukti</label>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="inputGroupFile01"
-                                        aria-describedby="inputGroupFileAddon01">
-                                    <label class="custom-file-label" for="inputGroupFile01">Choose
-                                        file</label>
-                                </div>
-                            </div> -->
-                            <button class="btn btn-primary" style="float: right;">
-                                Edit Status Aduan</button>
+                            <div id="mapid" class="mb-3" style="height: 40em; width: 40em;"></div>
                         </form>
                     </div>
                 </div>
@@ -95,3 +105,18 @@
 </div>
 
 <%- include ../../partials/footer.ejs %>
+
+<script>
+    // making map and tiles
+    let pLat = document.getElementById("latitude").value;
+    let pLong = document.getElementById("longitude").value;
+    const mymap = L.map("mapid").setView([pLat, pLong], 16);
+    const marker = L.marker([pLat, pLong]).addTo(mymap);
+
+    const attribution =
+        '&copy; <a href="https://www.openstreetmap.org/copyright"> OpenStreet </a> contributors';
+
+    const tileUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+    const tiles = L.tileLayer(tileUrl, { attribution });
+    tiles.addTo(mymap);
+</script>

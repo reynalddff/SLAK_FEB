@@ -4,7 +4,7 @@ const moment = require('moment')
 const Op = require("sequelize").Op;
 
 // models
-const { Role, Peminjaman_Kunci, Kunci, User, Aduan_Hilang } = require('./../models');
+const { Role, Peminjaman_Kunci, Kunci, User, Aduan_Hilang, Notifications } = require('./../models');
 
 // middleware auth
 const check = require('./../middlewares/rolePermission');
@@ -24,8 +24,17 @@ router.get('/', async (req, res) => {
         where: { status_peminjaman: 'menunggu validasi' },
         include: [{ model: Kunci }, { model: User }],
         limit: 5
-    })
-    res.render('satpam/dashboard', { peminjaman_kunci, foto_user: req.user.foto_user })
+    });
+
+    const notifications = await Notifications.findAll({
+        where: {
+            tujuan_notif: '7'
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ]
+    });
+    res.render('satpam/dashboard', { peminjaman_kunci, notifications, foto_user: req.user.foto_user })
 });
 
 // edit profile
@@ -53,7 +62,16 @@ router.get('/pinjam_kunci/validasi_pinjam_kunci', async (req, res) => {
         ]
     });
 
-    res.render('satpam/pinjam_kunci/validasi_pinjam_kunci', { peminjaman_kunci, success: req.flash('success'), failed: req.flash('failed'), foto_user: req.user.foto_user })
+    const notifications = await Notifications.findAll({
+        where: {
+            tujuan_notif: '7'
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ]
+    });
+
+    res.render('satpam/pinjam_kunci/validasi_pinjam_kunci', { peminjaman_kunci, notifications, success: req.flash('success'), failed: req.flash('failed'), foto_user: req.user.foto_user })
 });
 router.get('/pinjam_kunci/validasi_pinjam_kunci/:id', validasiPinjamKunci);
 router.get('/pinjam_kunci/tolak_pinjam_kunci/:id', tolakPinjamKunci);
@@ -67,14 +85,42 @@ router.get('/pinjam_kunci/validasi_kembali_kunci', async (req, res) => {
         include: [{ model: Kunci }, { model: User }],
         limit: 10
     });
-    console.log(now)
-    res.render('satpam/pinjam_kunci/validasi_kembali_kunci', { peminjaman_kunci, success: req.flash('success'), foto_user: req.user.foto_user })
+
+    const notifications = await Notifications.findAll({
+        where: {
+            tujuan_notif: '7'
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ]
+    });
+
+    res.render('satpam/pinjam_kunci/validasi_kembali_kunci', { peminjaman_kunci, notifications, success: req.flash('success'), foto_user: req.user.foto_user })
+    // console.log(now)
 });
 router.get('/pinjam_kunci/validasi_kembali_kunci/:id', validasiKembaliKunci);
 
-
 // Aduan Hilang
 router.get('/aduan_hilang', getAduanKehilangan);
+router.get('/aduan_hilang/form/:id', async (req, res) => {
+    const aduan = await Aduan_Hilang.findOne({
+        include: User,
+        where: {
+            id: req.params.id
+        }
+    });
+
+    const notifications = await Notifications.findAll({
+        where: {
+            tujuan_notif: '7'
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ]
+    });
+
+    res.render('satpam/aduan_hilang/verifikasi_form', { aduan, notifications, success: req.flash('success'), foto_user: req.user.foto_user })
+});
 router.get('/aduan_hilang/validasi/:id', validasiSatpamAduan);
 
 

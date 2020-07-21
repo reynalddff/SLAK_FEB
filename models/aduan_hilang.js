@@ -20,11 +20,19 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: "-"
     },
+    latitude: {
+      type: DataTypes.DOUBLE,
+      defaultValue: 0
+    },
+    longitude: {
+      type: DataTypes.DOUBLE,
+      defaultValue: 0
+    },
     foto_barang: {
       type: DataTypes.STRING,
       defaultValue: "",
       get() {
-        const image = this.getDataValue('image');
+        const image = this.getDataValue('foto_barang');
         return uploadDir + image
       }
     },
@@ -38,6 +46,10 @@ module.exports = (sequelize, DataTypes) => {
           msg: "status aduan hanya tersedia 3 pilihan: menunggu validasi satpam, menunggu validasi admin/kasubbag dan sudah divalidasi"
         }
       }
+    },
+    kategori_aduan: {
+      type: DataTypes.STRING,
+      defaultValue: "Aduan barang hilang"
     }
   }, {});
   Aduan_Hilang.associate = function (models) {

@@ -4,7 +4,7 @@ const moment = require('moment')
 const Op = require("sequelize").Op;
 
 // models
-const { Aduan_Lapor, User, Komentar, Kunci, Peminjaman_Kunci } = require('./../models');
+const { Aduan_Lapor, User, Komentar, Kunci, Peminjaman_Kunci, Notifications, Aduan_Hilang } = require('./../models');
 //middleware auth
 const check = require('./../middlewares/rolePermission')
 // upload multer
@@ -37,20 +37,35 @@ router.get('/', async (req, res, next) => {
         order: [['tanggal_pinjam', 'DESC']],
         limit: 5
     });
+
     const { count } = await User.findAndCountAll({
         where: {
             id: {
                 [Op.not]: req.user.id
             }
         }
-    })
+    });
+
+    const notifications = await Notifications.findAll({
+        where: {
+            tujuan_notif: {
+                [Op.or]: ['2', '3', '4', '5', '6', '7']
+            }
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ]
+    });
+
     res.render('admin/dashboard', {
         nama_user: req.user.nama_user,
+        notifications,
         aduans,
         peminjaman_kunci,
         tanggal_pinjam: moment(peminjaman_kunci.tanggal_pinjam).format('dddd, DD MMMM YYYY'),
         user: count,
-        foto_user: req.user.foto_user
+        foto_user: req.user.foto_user,
+        RoleId: req.user.RoleId
     })
 });
 
@@ -73,7 +88,7 @@ router.post('/manajemen_user/tambah', upload.single('foto_user'), createUser);
 router.get('/manajemen_user/edit/:id', getProfileById);
 router.post('/manajemen_user/edit/:id', updateProfile)
 router.get('/manajemen_user/edit/credentials/:id', getAccountById);
-router.post('/manajemen_user/edit/:id', updateAccount);
+router.post('/manajemen_user/edit/credentials/:id', updateAccount);
 router.delete('/manajemen_user/delete/:id', deleteUser);
 
 //CRUD Kunci
@@ -95,7 +110,17 @@ router.get('/pinjam_kunci/validasi_pinjam_kunci', async (req, res) => {
         ]
     });
 
+    const notifications = await Notifications.findAll({
+        where: {
+            tujuan_notif: ['7', '3', '4', '5', '6']
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ]
+    });
+
     res.render('admin/pinjam_kunci/validasi_pinjam_kunci', {
+        notifications,
         peminjaman_kunci, success: req.flash('success'),
         failed: req.flash('failed'),
         foto_user: req.user.foto_user,
@@ -114,8 +139,17 @@ router.get('/pinjam_kunci/validasi_kembali_kunci', async (req, res) => {
         include: [{ model: Kunci }, { model: User }],
         limit: 10
     });
+    const notifications = await Notifications.findAll({
+        where: {
+            tujuan_notif: ['7', '3', '4', '5', '6']
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ]
+    });
     console.log(now)
     res.render('admin/pinjam_kunci/validasi_kembali_kunci', {
+        notifications,
         peminjaman_kunci,
         success: req.flash('success'),
         foto_user: req.user.foto_user,
@@ -129,6 +163,27 @@ router.get('/aduan_hilang/validasi_admin', getAduanKehilangan2);
 router.get('/aduan_hilang/validasi_admin/:id', validasiAdminAduan);
 router.get('/aduan_hilang/validasi_satpam', getAduanKehilangan)
 router.get('/aduan_hilang/validasi_satpam/:id', validasiSatpamAduan);
+router.get('/aduan_hilang/form/:id', async (req, res) => {
+    const aduan = await Aduan_Hilang.findOne({
+        include: User,
+        where: {
+            id: req.params.id
+        }
+    });
+
+    const notifications = await Notifications.findAll({
+        where: {
+            tujuan_notif: {
+                [Op.or]: ['2', '3', '4', '5', '6', '7']
+            }
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ]
+    });
+
+    res.render('admin/aduan_hilang/validasi_form', { aduan, notifications, success: req.flash('success'), foto_user: req.user.foto_user, nama_user: req.user.nama_user })
+});
 
 
 module.exports = router;

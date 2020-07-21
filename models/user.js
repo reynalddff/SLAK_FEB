@@ -17,11 +17,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       isEmail: true,
       allowNull: false,
+      unique: {
+        args: true,
+        msg: 'Duplicate email!'
+      }
     },
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: {
+        args: true,
+        msg: 'Duplicate username!'
+      }
     },
     password: {
       type: DataTypes.STRING,
@@ -56,6 +63,7 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Aduan_Lapor);
     User.hasMany(models.Peminjaman_Kunci)
     User.hasMany(models.Aduan_Hilang);
+    User.hasMany(models.Notifications)
     User.belongsTo(models.Role);
   };
   return User;

@@ -1,17 +1,52 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
+const fetch = require('node-fetch');
+const sequelize = require('sequelize');
+const QRcode = require('qrcode')
 
-const { User, Aduan_Lapor, Role, Komentar, Kunci, Peminjaman_Kunci, Aduan_Hilang } = require('../models');
-const sequelize = require('sequelize')
+const { User, Aduan_Lapor, Role, Komentar, Kunci, Peminjaman_Kunci, Aduan_Hilang, Notifications } = require('../models');
+const { Op } = require('sequelize')
 
 const moment = require('moment')
 
 require('express-async-errors');
 
+router.get('/geolocation', async (req, res) => {
+    const url = "http://localhost:3000/karyawan";
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        res.json({ data });
+    } catch (error) {
+        console.log(error);
+    }
+})
+
 router.get('/roles', async (req, res) => {
     const role = await Role.findAll({});
     res.status(200).json({
         role: role[1].id
+    });
+});
+
+// Notification
+router.get('/notifications', async (req, res) => {
+    const notifications = await Notifications.findAll({
+        where: {
+            [Op.or]: [{ tujuan_notif: '3' }, { tujuan_notif: '7' }]
+        }
+    })
+    res.status(200).json({
+        notifications
+    });
+});
+
+router.delete('/notifications', async (req, res) => {
+    const notif = await Notifications.destroy({ truncate: true });
+    res.status(200).json({
+        success: 'success',
+        notif
     })
 })
 
@@ -58,8 +93,32 @@ router.delete('/user/:id', async (req, res) => {
         msg: 'User tidak ditemukan'
     })
 });
+router.patch('/user/:id', async (req, res) => {
+    try {
+        const { username, password } = req.body
+        const user = await User.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        if (user) {
+            const salt = bcrypt.genSaltSync(10);
+            const passwordHash = bcrypt.hashSync(password, salt);
+            const userUpdated = await user.update({
+                username,
+                password: passwordHash
+            })
+            res.status(200).json({
+                msg: 'berhasil update',
+                userUpdated
+            })
+        }
+    } catch (error) {
+        res.json({ error: error.errors[0].message })
+    }
+});
+
 // router.get('/:id', (req, res) => { });
-// router.patch('/:id', (req, res) => { });
 
 // api aduan lapor
 router.get('/aduan', async (req, res) => {
@@ -78,6 +137,57 @@ router.get('/aduan', async (req, res) => {
         msg: 'Success',
         aduan
     })
+});
+
+// get aduan by month
+router.get('/aduanByMonth/:id', async (req, res) => {
+    const aduan = await Aduan_Lapor.findAll({
+        attributes: [
+            [sequelize.fn('date_trunc', 'month', sequelize.col('createdAt')), 'date'],
+            [sequelize.fn('count', '*'), 'count']
+        ],
+        group: [
+            sequelize.col('date')
+        ],
+        where: {
+            tujuan_aduan: req.params.id
+        }
+    })
+
+    const dataByMonth = {
+        july: aduan[0]
+    }
+
+    res.send({ dataByMonth })
+});
+
+// get aduan by month - admin
+router.get('/aduanByTujuan', async (req, res) => {
+    const aduanOperatorUmum = await Aduan_Lapor.findAndCountAll({
+        where: {
+            tujuan_aduan: 3
+        }
+    });
+
+    const aduanOperatorAkademik = await Aduan_Lapor.findAndCountAll({
+        where: {
+            tujuan_aduan: 4
+        }
+    });
+
+    const aduanOperatorKeuangan = await Aduan_Lapor.findAndCountAll({
+        where: {
+            tujuan_aduan: 5
+        }
+    });
+
+    const aduanOperatorKemahasiswaan = await Aduan_Lapor.findAndCountAll({
+        where: {
+            tujuan_aduan: 6
+        }
+    });
+
+    res.send({ umum: aduanOperatorUmum.count, akademik: aduanOperatorAkademik.count, keuangan: aduanOperatorKeuangan.count, kemahasiswaan: aduanOperatorKemahasiswaan.count })
 });
 
 router.post('/aduan', async (req, res) => {
@@ -99,9 +209,16 @@ router.post('/aduan', async (req, res) => {
         UserId
     });
 
+    const notification = await Notifications.create({
+        jenis_notif: 'aduan layanan',
+        deskripsi_notif: 'Telah masuk pengajuan aduan layanan dari "nama user"',
+        UserId
+    })
+
     res.status(201).send({
         msg: 'Berhasil menambahkan aduan',
-        aduan
+        aduan,
+        notification
     });
 
 });
@@ -333,11 +450,62 @@ router.delete('/kunci/:id', async (req, res) => {
 });
 
 // pinjam kunci
+router.get('/cari_kunci_by_date', async (req, res) => {
+    const pinjamKunci = await Peminjaman_Kunci.findAll({
+        include: {
+            model: Kunci,
+            where: {
+                // nama_ruangan: ['Ruang Pertemuan 1', 'Ruang Rapat 2'],
+                status_kunci: 'tersedia'
+            }
+        },
+    });
+
+    const kunciDipinjam = await Kunci.findAll({
+        include: {
+            model: Peminjaman_Kunci,
+            // where: {
+            //     // [Op.not]: {
+            //     //     tanggal_pinjam: '2020-07-19',
+            //     //     status_peminjaman: 'dipinjam'
+            //     // }
+            //     tanggal_pinjam: '2020-07-19',
+            // }
+        },
+        where: {
+            status_kunci: 'dipinjam'
+        }
+    });
+
+    const result = kunciDipinjam.map(kunci => ({ nama_ruangan: kunci.nama_ruangan }));
+    console.log(result);
+    res.json({ kunciDipinjam });
+
+    // return result.forEach(async ({ nama_ruangan }) => {
+    //     const arrayKunci = [];
+    //     arrayKunci.push(nama_ruangan)
+    //     // const kunciTersedia = await Kunci.findAll({
+    //     //     where: {
+    //     //         nama_ruangan: [result.nama_ruangan]
+    //     //     },
+    //     //     raw: true
+    //     // });
+    //     console.log(arrayKunci)
+    //     res.json({ arrayKunci, kunciDipinjam });
+    // })
+
+})
+
 router.get('/pinjam_kunci', async (req, res) => {
     const peminjaman_kunci = await Peminjaman_Kunci.findAll({
         include: [
             { model: User }, { model: Kunci }
-        ]
+        ],
+        where: {
+            [Op.not]: {
+                tanggal_pinjam: '2020-07-19'
+            }
+        }
     });
 
     if (!peminjaman_kunci.length) {
@@ -527,6 +695,18 @@ router.patch('/validasi_aduan_admin/:id', async (req, res) => {
         msg: 'Aduan Hilang berhasil di validasi oleh Admin /  kasubbag',
         aduan: validasiAdmin
     })
-})
+});
+
+// QR CODE
+// router.post('/qrcode', async (req, res) => {
+//     const { nama, website } = req.body;
+//     const generateQR = async ({ nama, website }) => {
+//         try {
+//             console.log(await QRCode.toString(nama, website, { type: 'terminal' }))
+//         } catch (error) {
+//             console
+//         }
+//     }
+// })
 
 module.exports = router;

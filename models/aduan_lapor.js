@@ -1,5 +1,6 @@
 'use strict';
-const uploadDir = '/images/'
+const uploadDir = '/images/';
+const moment = require('moment');
 module.exports = (sequelize, DataTypes) => {
   const Aduan_Lapor = sequelize.define('Aduan_Lapor', {
     id: {
@@ -20,6 +21,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: "-"
     },
+    latitude: {
+      type: DataTypes.DOUBLE,
+      defaultValue: 0
+    },
+    longitude: {
+      type: DataTypes.DOUBLE,
+      defaultValue: 0
+    },
     tujuan_aduan: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -39,19 +48,50 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: "",
       get() {
-        const image = this.getDataValue('image');
+        const image = this.getDataValue('foto_aduan');
         return uploadDir + image
       }
+    },
+    kategori_aduan: {
+      type: DataTypes.STRING,
+      defaultValue: "Aduan lapor dan layanan"
     },
     tanggapan_aduan: {
       type: DataTypes.STRING,
       defaultValue: ""
-    }
+    },
+    tanggapan_user: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+    },
+    tanggapan_tanggal: {
+      type: DataTypes.DATE,
+      defaultValue: new Date(),
+      get() {
+        return moment(this.getDataValue('tanggal_pinjam')).format('dddd, DD MMMM YYYY');
+      }
+    },
+    tanggapan_foto: {
+      type: DataTypes.STRING,
+      defaultValue: "",
+      get() {
+        const image = this.getDataValue('tanggapan_foto');
+        return uploadDir + image
+      }
+    },
+    // createdAt: {
+    //   type: DataTypes.DATE,
+    //   defaultValue: new Date(),
+    //   get() {
+    //     return moment(this.getDataValue('createdAt')).format('dddd, DD MMMM YYYY');
+    //   }
+    // }
   }, {});
   Aduan_Lapor.associate = function (models) {
     // associations can be defined here
-    Aduan_Lapor.hasOne(models.Komentar, { onDelete: 'CASCADE', hooks: true });
     Aduan_Lapor.belongsTo(models.User);
+    Aduan_Lapor.hasOne(models.Komentar, { onDelete: 'CASCADE', hooks: true });
   };
+  // Aduan_Lapor.sync({ force: true })
   return Aduan_Lapor;
 };

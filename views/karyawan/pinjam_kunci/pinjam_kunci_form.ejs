@@ -18,18 +18,22 @@
                             <div class="form-group">
                                 <label>Ruangan</label>
                                 <input type="text" class="form-control" value="<%=kunci.nama_ruangan%>" readonly>
-                                <!-- <textarea name="" id="" cols="30" rows="10"></textarea> -->
                             </div>
                             <div class="form-group">
-                                <label>Tanggal Pinjam</label>
-                                <input type="text" class="form-control" value="<%= tanggal_pinjam %>" readonly>
-                                <!-- <textarea name="" id="" cols="30" rows="10"></textarea> -->
+                                <label>Keperluan</label>
+                                <input type="text" class="form-control" name="keperluan" required>
                             </div>
                             <div class="form-group">
+                                <label for="datepicker-pinjam">Tanggal Pinjam</label>
+                                <input type="text" class="form-control" id="datepicker-pinjam" value=""
+                                    name="tanggal_pinjam">
+                            </div>
+                            <input type="hidden" name="start_date">
+                            <input type="hidden" name="end_date">
+                            <!-- <div class="form-group">
                                 <label>Tanggal Kembali</label>
                                 <input type="text" class="form-control" value="<%= tanggal_kembali %>" readonly>
-                                <!-- <textarea name="" id="" cols="30" rows="10"></textarea> -->
-                            </div>
+                            </div> -->
                             <button class="btn btn-primary" style="float: right;">Pinjam Kunci</button>
                             <a href="pinjam_kunci.html" class="btn btn-dark mr-3" style="float: right;">Kembali</a>
                         </form>
@@ -41,3 +45,31 @@
 </div>
 
 <%- include ../../partials/footer.ejs %>
+
+<script>
+    const today = new Date();
+    const yesterday = today.setDate(today.getDate() - 1);
+    const tomorrow = today.setDate(today.getDate() + 1);
+    $(function () {
+        $("#datepicker-pinjam").daterangepicker({
+            // changeYear: true,
+            singleDatePicker: true,
+            timePicker24Hour: true,
+            minDate: today,
+            timePicker: true,
+            startDate: moment().startOf('hour'),
+            // endDate: moment().startOf('hour').add(24, 'hour'),
+            locale: {
+                format: 'dddd, DD MMMM YYYY H:mm'
+            }
+        });
+        // $("#datepicker").datepicker("show");
+        $('form').submit(function (ev, picker) {
+            // [startDate, endDate] = $('#datepicker-pinjam').val().split(' - ');
+            startDate = $('#datepicker-pinjam').val();
+            const tomorrow = moment(startDate).add(1, "d");
+            $(this).find('input[name="start_date"]').val(startDate);
+            $(this).find('input[name="end_date"]').val(tomorrow);
+        });
+    });
+</script>

@@ -8,6 +8,7 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const RedisStore = require('connect-redis');
+const cors = require('cors')
 
 const app = express();
 
@@ -18,7 +19,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -35,6 +36,7 @@ app.use(session({
   saveUninitialized: true,
 }))
 app.use(flash())
+app.use(cors())
 
 // passport 
 app.use(passport.initialize());

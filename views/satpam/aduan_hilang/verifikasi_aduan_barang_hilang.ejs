@@ -44,10 +44,9 @@
                                     <tr>
                                         <th scope="col">#</th>
                                         <th scope="col">Nama Pelapor</th>
-                                        <th scope="col">Deskripsi</th>
-                                        <th scope="col">Lokasi Hilang</th>
                                         <th scope="col">Status</th>
-                                        <th scope="col">Verifkasi</th>
+                                        <th scope="col">Verifikasi Aduan</th>
+                                        <th scope="col">Tolak Aduan</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -55,24 +54,29 @@
                                     <% aduan.forEach((aduan, index) => { %>
                                     <tr>
                                         <th scope="row"><%= index + 1 %></th>
-                                        <td><a href="#komentarModal" class="detail-aduan" data-toggle="modal"
+                                        <td>
+                                            <a href="#komentarModal" class="detail-aduan" data-toggle="modal"
                                                 data-target="#komentarModal" data-id="<%= aduan.id %>"
                                                 data-aduan="<%= aduan.judul_aduan %>"
                                                 data-deskripsi="<%= aduan.deskripsi_aduan %>"
                                                 data-lokasi="<%= aduan.lokasi_aduan %>"
                                                 data-nama="<%= aduan.User.nama_user %>"
                                                 data-telp="<%= aduan.User.telp_user %>"
-                                                data-email="<%= aduan.User.email %>">
+                                                data-email="<%= aduan.User.email %>"
+                                                data-image="<%= aduan.foto_barang %>">
                                                 <%= aduan.User.nama_user %>
                                             </a>
                                         </td>
-                                        <td><%= aduan.deskripsi_aduan %></td>
-                                        <td><%= aduan.lokasi_aduan %></td>
                                         <% if(aduan.status_aduan === 'menunggu validasi satpam') { %>
                                         <td class="text-warning font-weight-bold text-capitalize">
                                             <%= aduan.status_aduan %></td>
-                                        <td><button onclick="validasi_aduan('<%= aduan.id %>')"
+                                        <td><a href="/satpam/aduan_hilang/form/<%= aduan.id %>"
                                                 class="btn btn-success">Verifikasi
+                                                Aduan
+                                            </a>
+                                        </td>
+                                        <td><button onclick="tolak_aduan('<%= aduan.id %>')"
+                                                class="btn btn-danger">Tolak
                                                 Aduan
                                             </button>
                                         </td>
@@ -88,6 +92,11 @@
                                                 class="btn btn-secondary disabled">Verifikasi
                                                 Aduan</a>
                                         </td>
+                                        <td><button onclick="tolak_aduan('<%= aduan.id %>')"
+                                                class="btn btn-secondary disabled">Tolak
+                                                Aduan
+                                            </button>
+                                        </td>
                                         <td><a class="btn btn-secondary disabled btn-action" aria-disabled=""
                                                 data-toggle="tooltip" title="Print Aduan"><i
                                                     class="fas fa-print"></i></a>
@@ -99,6 +108,11 @@
                                         <td><a href="pengajuan_aduan_komentar.html"
                                                 class="btn btn-secondary disabled">Verifikasi
                                                 Aduan</a>
+                                        </td>
+                                        <td><button onclick="tolak_aduan('<%= aduan.id %>')"
+                                                class="btn btn-secondary disabled">Tolak
+                                                Aduan
+                                            </button>
                                         </td>
                                         <td><a class="btn btn-dark btn-action" data-toggle="tooltip"
                                                 title="Print Aduan"><i class="fas fa-print"></i></a>
@@ -166,30 +180,6 @@
 <%- include ../../partials/footer.ejs %>
 
 <script>
-    function validasi_aduan(id) {
-        let idAduan = id;
-        swal({
-            title: "Yakin ingin memvalidasi aduan kehilangan ini?",
-            text: "Konfirmasi penyetujuan tidak dapat kembali lagi",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true
-        }).then((willDelete) => {
-            if (willDelete) {
-                swal({
-                    title: 'Informasi',
-                    text: "Success memvalidasi aduan kehilangan",
-                    position: 'top-left',
-                    icon: 'success',
-                    buttons: false,
-                    timer: 2000
-                }).then((suksesDelete) => {
-                    window.location.assign(`/satpam/aduan_hilang/validasi/${idAduan}`);
-                })
-            }
-        })
-    };
-
     $(document).ready(function () {
         $('#aduan-hilang').on('click', '.detail-aduan', function () {
             const id = $(this).data('id');
@@ -199,6 +189,7 @@
             const nama = $(this).data('nama');
             const telp = $(this).data('telp');
             const email = $(this).data('email');
+            const image = $(this).data('image');
 
             $('#komentarModal').modal('show');
             $('.id').val(id);
@@ -208,6 +199,7 @@
             $('.nama_user').val(nama);
             $('.telp_user').val(telp);
             $('.email_user').val(email);
+            $('.foto_barang').val(image)
         });
     });
 </script>

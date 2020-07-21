@@ -1,8 +1,7 @@
-const { User, Role } = require('./../models');
+const { User, Role, Notifications } = require('./../models');
 const bcrypt = require('bcryptjs');
 const Op = require("sequelize").Op;
 require('express-async-errors');
-
 
 exports.getUsers = async (req, res) => {
     try {
@@ -18,10 +17,22 @@ exports.getUsers = async (req, res) => {
             },
             order: [['RoleId', 'ASC']]
         });
+
+        const notifications = await Notifications.findAll({
+            where: {
+                [Op.or]: [{ tujuan_notif: '3' }, { tujuan_notif: '7' }]
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
+
         res.render('admin/manajemen_user/manajemen_user', {
-            users: users,
+            notifications,
+            users,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
+            error: req.flash('error'),
             foto_user: req.user.foto_user
         })
     } catch (error) {
@@ -32,7 +43,15 @@ exports.getUsers = async (req, res) => {
 
 exports.formCreateUser = async (req, res) => {
     const roles = await Role.findAll({});
-    res.render('admin/manajemen_user/manajemen_user_tambah', { roles, nama_user: req.user.nama_user, foto_user: req.user.foto_user, error: req.flash('error'), foto_user: req.user.foto_user });
+    const notifications = await Notifications.findAll({
+        where: {
+            [Op.or]: [{ tujuan_notif: '3' }, { tujuan_notif: '7' }]
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ]
+    });
+    res.render('admin/manajemen_user/manajemen_user_tambah', { roles, notifications, nama_user: req.user.nama_user, foto_user: req.user.foto_user, error: req.flash('error'), foto_user: req.user.foto_user });
 }
 
 exports.createUser = async (req, res) => {
@@ -71,7 +90,18 @@ exports.getProfileById = async (req, res) => {
             msg: 'User is not found'
         })
     }
+
+    const notifications = await Notifications.findAll({
+        where: {
+            [Op.or]: [{ tujuan_notif: '3' }, { tujuan_notif: '7' }]
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ]
+    });
+
     res.render('admin/manajemen_user/manajemen_user_edit', {
+        notifications,
         user,
         roles,
         nama_user: req.user.nama_user,
@@ -94,10 +124,21 @@ exports.getAccountById = async (req, res) => {
                 msg: 'User is not found'
             })
         }
+
+        const notifications = await Notifications.findAll({
+            where: {
+                [Op.or]: [{ tujuan_notif: '3' }, { tujuan_notif: '7' }]
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('admin/manajemen_user/manajemen_user_edit_pass', {
             user,
+            notifications,
             nama_user: req.user.nama_user,
-            foto_user: req.user.foto_user
+            foto_user: req.user.foto_user,
+            error: req.flash('error')
         })
     }
 }
@@ -108,48 +149,58 @@ exports.updateProfile = async (req, res) => {
     const user = await User.findOne({
         where: { id }
     });
-    if (!user) {
-        return res.status(404).json({
-            status: 'Failed',
-            msg: 'User is not found'
-        })
-    } else {
-        await user.update({
-            nama_user,
-            email,
-            username,
-            telp_user,
-            foto_user,
-            RoleId
-        })
-        req.flash('success', 'User berhasil diupdate')
-        res.redirect('/admin/manajemen_user')
+    try {
+        if (!user) {
+            return res.status(404).json({
+                status: 'Failed',
+                msg: 'User is not found'
+            })
+        } else {
+            await user.update({
+                nama_user,
+                email,
+                username,
+                telp_user,
+                foto_user,
+                RoleId
+            })
+            req.flash('success', 'User berhasil diupdate')
+            res.redirect('/admin/manajemen_user')
+        }
+    } catch (error) {
+        req.flash('error', 'Username telah dipakai, silahkan gunakan username yang lain!')
+        // res.json({ error: error.errors[0].message })
     }
 }
 
 exports.updateAccount = async (req, res) => {
-
     const { username, password } = req.body;
     const { id } = req.params;
-    const user = await User.findOne({
-        where: { id }
-    });
-    if (!user) {
-        return res.status(404).json({
-            status: 'Failed',
-            msg: 'User is not found'
-        })
+    try {
+        const user = await User.findOne({
+            where: { id }
+        });
+        if (!user) {
+            return res.status(404).json({
+                status: 'Failed',
+                msg: 'User is not found'
+            })
+        }
+        const salt = await bcrypt.genSaltSync(10);
+        const passwordHash = await bcrypt.hashSync(password, salt);
+
+        await user.update({
+            username,
+            password: passwordHash,
+        });
+
+        req.flash('success', 'User berhasil diupdate')
+        res.redirect('/admin/manajemen_user')
+    } catch (error) {
+        // res.json({ error: error.errors[0].message })
+        req.flash('error', 'Username telah dipakai, silahkan gunakan username yang lain!');
+        res.redirect(`/admin/manajemen_user/edit/credentials/${id}`)
     }
-    const salt = await bcrypt.genSaltSync(10);
-    const passwordHash = await bcrypt.hashSync(password, salt);
-
-    await user.update({
-        username,
-        password: passwordHash,
-    });
-
-    req.flash('success', 'User berhasil diupdate')
-    res.redirect('/admin/manajemen_user')
 }
 
 exports.deleteUser = async (req, res) => {
@@ -186,7 +237,16 @@ exports.getProfile = async (req, res) => {
         })
     }
     if (req.user.RoleId === 1) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: req.user.id
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('karyawan/edit_profile', {
+            notifications,
             user,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
@@ -194,47 +254,101 @@ exports.getProfile = async (req, res) => {
             foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 2) {
+        const notifications = await Notifications.findAll({
+            where: {
+                [Op.or]: [{ tujuan_notif: '3' }, { tujuan_notif: '7' }]
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('admin/edit_profile', {
             user,
+            notifications,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
             error: req.flash('error'),
             foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 3) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: req.user.RoleId.toString()
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('operator/edit_profile', {
             user,
+            notifications,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
             error: req.flash('error'),
             foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 4) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: req.user.RoleId.toString()
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('operator/edit_profile', {
             user,
+            notifications,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
             error: req.flash('error'),
             foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 5) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: req.user.RoleId.toString()
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('operator/edit_profile', {
             user,
+            notifications,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
             error: req.flash('error'),
             foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 6) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: req.user.RoleId.toString()
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('operator/edit_profile', {
             user,
+            notifications,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
             error: req.flash('error'),
             foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 7) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: '7'
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('satpam/edit_profile', {
+            notifications,
             user,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
@@ -257,49 +371,112 @@ exports.getAccount = async (req, res) => {
         })
     }
     if (req.user.RoleId === 1) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: req.user.id
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('karyawan/edit_pass', {
+            notifications,
             user,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
             foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 2) {
+        const notifications = await Notifications.findAll({
+            where: {
+                [Op.or]: [{ tujuan_notif: '3' }, { tujuan_notif: '7' }]
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('admin/edit_pass', {
             user,
+            notifications,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
             foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 3) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: req.user.RoleId.toString()
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('operator/edit_pass', {
+            notifications,
             user,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
             foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 4) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: req.user.RoleId.toString()
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('operator/edit_pass', {
+            notifications,
             user,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
             foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 5) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: req.user.RoleId.toString()
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('operator/edit_pass', {
+            notifications,
             user,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
             foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 6) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: req.user.RoleId.toString()
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('operator/edit_pass', {
+            notifications,
             user,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
             foto_user: req.user.foto_user
         })
     } else if (req.user.RoleId === 7) {
+        const notifications = await Notifications.findAll({
+            where: {
+                tujuan_notif: '7'
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
         res.render('satpam/edit_pass', {
+            notifications,
             user,
             nama_user: req.user.nama_user,
             success: req.flash('success'),
@@ -402,3 +579,12 @@ exports.editAccount = async (req, res) => {
         res.redirect('/satpam/edit_account');
     }
 }
+
+// exports.getNotifications = async (req, res) => {
+//     const notification = await Notifications.findAll({
+//         where: {
+//             tujuan_notif: req.user.RoleId,
+//             UserId: req.user.id
+//         }
+//     });
+// }

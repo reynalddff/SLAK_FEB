@@ -21,13 +21,28 @@
         <% } %>
         <% if (kunciDipinjam === null && menungguValidasi === null) { %>
         <div class="row">
-            <div class="col-lg-8 col-md-8 col-sm-12">
+            <!-- <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h4> Cari Kunci </h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="" method="POST">
+                            <div class="form-group">
+                                <label for="datepicker">Pilih Tanggal Pinjam</label>
+                                <input type="text" class="form-control" value="" id="datepicker">
+                            </div>
+                            <button class="btn btn-primary" style="float: right;"> Cari Kunci </button>
+                        </form>
+                    </div>
+                </div>
+            </div> -->
+            <div class="col-lg-12 col-md-12 col-sm-12">
                 <div class="card card-primary">
                     <div class="card-header">
                         <h4>Daftar Kunci</h4>
                     </div>
                     <div class="card-body">
-                        <!-- Kurang datepicker aja -->
                         <div class="table-responsive">
                             <table id="example" class="table" style="width:100%">
                                 <thead>
@@ -76,7 +91,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-4 col-sm-12">
+            <div class="col-lg-12 col-md-12 col-sm-12">
                 <div class="card card-primary">
                     <div class="card-header">
                         <h4>Riwayat Peminjaman Kunci: <%= nama_user %></h4>
@@ -169,3 +184,20 @@
 </div>
 
 <%- include ../../partials/footer.ejs %>
+
+<script>
+    $(function () {
+        $("#datepicker").datepicker({
+            // changeYear: true,
+            minDate: 0,
+            changeMonth: true,
+            showButtonPanel: true,
+            dateFormat: "yy-m-dd"
+        });
+        $("#datepicker").change(function () {
+            var date = $(this).datepicker("getDate");
+            console.log(date);
+        });
+        // $("#datepicker").datepicker("show");
+    });
+</script>

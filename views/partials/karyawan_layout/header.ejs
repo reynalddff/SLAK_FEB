@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="/modules/owlcarousel2/dist/assets/owl.carousel.min.css">
     <link rel="stylesheet" href="/modules/owlcarousel2/dist/assets/owl.theme.default.min.css">
     <link rel="stylesheet" href="/modules/chocolat/dist/css/chocolat.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
 
     <!-- Template CSS -->
     <link rel="stylesheet" href="/stylesheets/style.css">
@@ -58,51 +60,36 @@
                                 </div>
                             </div>
                             <div class="dropdown-list-content dropdown-list-icons">
+                                <% notifications.forEach(notif => { %>
+                                <% if (notif.jenis_notif === 'aduan layanan') { %>
                                 <a href="#" class="dropdown-item dropdown-item-unread">
                                     <div class="dropdown-item-icon bg-primary text-white">
-                                        <i class="fas fa-code"></i>
+                                        <i class="fas fa-paper-plane"></i>
                                     </div>
                                     <div class="dropdown-item-desc">
-                                        Template update is available now!
-                                        <div class="time text-primary">2 Min Ago</div>
+                                        <%= notif.deskripsi_notif %>
+                                        <div class="time text-primary"><%= notif.createdAt %></div>
                                     </div>
                                 </a>
-                                <a href="#" class="dropdown-item">
-                                    <div class="dropdown-item-icon bg-info text-white">
-                                        <i class="far fa-user"></i>
-                                    </div>
-                                    <div class="dropdown-item-desc">
-                                        <b>You</b> and <b>Dedik Sugiharto</b> are now friends
-                                        <div class="time">10 Hours Ago</div>
-                                    </div>
-                                </a>
-                                <a href="#" class="dropdown-item">
-                                    <div class="dropdown-item-icon bg-success text-white">
-                                        <i class="fas fa-check"></i>
-                                    </div>
-                                    <div class="dropdown-item-desc">
-                                        <b>Kusnaedi</b> has moved task <b>Fix bug header</b> to <b>Done</b>
-                                        <div class="time">12 Hours Ago</div>
-                                    </div>
-                                </a>
-                                <a href="#" class="dropdown-item">
+                                <% } %>
+                                <% if (notif.jenis_notif === 'peminjaman kunci') { %>
+                                <a href="#" class="dropdown-item dropdown-item-unread">
+                                    <% if (notif.deskripsi_notif.includes('ditolak')) { %>
                                     <div class="dropdown-item-icon bg-danger text-white">
-                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <i class="fas fa-key"></i>
                                     </div>
+                                    <% } else { %>
+                                    <div class="dropdown-item-icon bg-primary text-white">
+                                        <i class="fas fa-key"></i>
+                                    </div>
+                                    <% } %>
                                     <div class="dropdown-item-desc">
-                                        Low disk space. Let's clean it!
-                                        <div class="time">17 Hours Ago</div>
+                                        <%= notif.deskripsi_notif %>
+                                        <div class="time text-primary"><%= notif.createdAt %></div>
                                     </div>
                                 </a>
-                                <a href="#" class="dropdown-item">
-                                    <div class="dropdown-item-icon bg-info text-white">
-                                        <i class="fas fa-bell"></i>
-                                    </div>
-                                    <div class="dropdown-item-desc">
-                                        Welcome to Stisla template!
-                                        <div class="time">Yesterday</div>
-                                    </div>
-                                </a>
+                                <% } %>
+                                <% }) %>
                             </div>
                             <div class="dropdown-footer text-center">
                                 <a href="#">View All <i class="fas fa-chevron-right"></i></a>
@@ -111,7 +98,8 @@
                     </li>
                     <li class="dropdown"><a href="#" data-toggle="dropdown"
                             class="nav-link dropdown-toggle nav-link-lg nav-link-user">
-                            <img alt="image" src="<%= foto_user %>" class="rounded-circle mr-1">
+                            <img alt="image" src="<%= foto_user %>" class="rounded-circle mr-1"
+                                style="width: 2em; height: 2em;">
                             <div class="d-sm-none d-lg-inline-block">Hi, <%= nama_user %></div>
                         </a>
                         <div class=" dropdown-menu dropdown-menu-right">
@@ -119,7 +107,7 @@
                                 <i class="far fa-user"></i> Profile
                             </a>
                             <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item has-icon text-danger">
+                            <a href="/logout" class="dropdown-item has-icon text-danger">
                                 <i class="fas fa-sign-out-alt"></i> Logout
                             </a>
                         </div>

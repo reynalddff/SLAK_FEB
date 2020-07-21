@@ -8,6 +8,30 @@
             <h1>Dashboard</h1>
         </div>
         <div class="row">
+            <div class="col-12 col-md-6 col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Chart Aduan</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="chartjs-size-monitor"
+                            style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                            <div class="chartjs-size-monitor-expand"
+                                style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                                <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                            </div>
+                            <div class="chartjs-size-monitor-shrink"
+                                style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                                <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="RoleId" value="<%=RoleId %>">
+                        <canvas id="chartAduan" width="840" height="420" class="chartjs-render-monitor">
+                        </canvas>
+                        <!-- <button class="btn btn-primary" id="click-me">Click me!</button> -->
+                    </div>
+                </div>
+            </div>
             <div class="col-lg-12 col-md-12 col-sm-12">
                 <div class="card card-primary">
                     <div class="card-header">
@@ -47,9 +71,9 @@
                                         <td class="text-danger font-weight-bold">Belum dikerjakan</td>
                                         <td><%= aduan.deskripsi_aduan %></td>
                                         <td>
-                                            <button class="btn btn-success">
+                                            <a href="/operator/aduan_lapor" class="btn btn-success">
                                                 Menyelsaikan Aduan
-                                            </button>
+                                            </a>
                                         </td>
                                         <% } %>
                                     </tr>
@@ -72,3 +96,64 @@
 </div>
 
 <%- include ../partials/footer.ejs %>
+<script>
+    $(document).ready(function () {
+        const RoleId = document.getElementById("RoleId").value;
+        const url = `http://127.0.0.1:3000/api/aduanByMonth/${RoleId}`;
+        // const url = 'http://127.0.0.1:3000/operator/aduan_lapor/perMonth';
+        $.ajax({
+            url: url,
+            contentType: "application/json",
+            dataType: 'json',
+            success: function (result) {
+                console.log(result.dataByMonth);
+                const ctx = document.getElementById("chartAduan").getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ["July"],
+                        datasets: [{
+                            label: 'Aduan Masuk',
+                            data: [result.dataByMonth.july.count * 1],
+                            borderWidth: 2,
+                            backgroundColor: 'rgba(63,82,227,.8)',
+                            borderWidth: 0,
+                            borderColor: 'transparent',
+                            pointBorderWidth: 0,
+                            pointRadius: 3.5,
+                            pointBackgroundColor: 'transparent',
+                            pointHoverBackgroundColor: 'rgba(63,82,227,.8)',
+                        }]
+                    },
+                    options: {
+                        legend: {
+                            display: false
+                        },
+                        scales: {
+                            yAxes: [{
+                                gridLines: {
+                                    // display: false,
+                                    drawBorder: false,
+                                    color: '#f2f2f2',
+                                },
+                                ticks: {
+                                    beginAtZero: true,
+                                    stepSize: 10,
+                                    callback: function (value, index, values) {
+                                        return + value;
+                                    }
+                                }
+                            }],
+                            xAxes: [{
+                                gridLines: {
+                                    display: false,
+                                    tickMarkLength: 15,
+                                }
+                            }]
+                        },
+                    }
+                });
+            }
+        })
+    });
+</script>

@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     tanggal_pinjam: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       defaultValue: sequelize.NOW,
       allowNull: false,
       get() {
@@ -17,11 +17,15 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     tanggal_kembali: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       defaultValue: sequelize.NOW,
       get() {
         return moment(this.getDataValue('tanggal_kembali')).format('dddd, DD MMMM YYYY');
       }
+    },
+    keperluan: {
+      type: DataTypes.STRING,
+      defaultValue: ""
     },
     status_peminjaman: {
       type: DataTypes.STRING,
