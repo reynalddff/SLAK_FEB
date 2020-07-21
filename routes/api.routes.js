@@ -26,7 +26,7 @@ router.get('/geolocation', async (req, res) => {
 router.get('/roles', async (req, res) => {
     const role = await Role.findAll({});
     res.status(200).json({
-        role: role[1].id
+        role
     });
 });
 
