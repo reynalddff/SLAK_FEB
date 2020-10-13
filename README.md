@@ -1,4 +1,4 @@
-# SLAK_FEB
+# SiNgadu
 Thesis - Sistem Laporan Aduan Karyawan
 
 Sistem tentang penyampaian Aduan Lapor untuk Fakultas Ekonomi dan Bisnis Universitas Brawijaya, Malang. Sistem ini sebagai hasil dari Skripsi yang sedang dikerjakan.
