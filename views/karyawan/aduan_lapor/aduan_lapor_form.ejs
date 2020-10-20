@@ -20,21 +20,21 @@
                             <input type="hidden" class="form-control" id="long" name="long" value=""></input>
                             <div class="form-group">
                                 <label for="">Judul Aduan</label>
-                                <input class="form-control" id="judul_aduan" name="judul_aduan"></input>
+                                <input class="form-control" id="judul_aduan" name="judul_aduan" required></input>
                             </div>
                             <div class="form-group">
                                 <label for="">Lokasi aduan</label>
                                 <input class="form-control" id="lokasi_aduan" name="lokasi_aduan"></input>
-                                <small>Harap isi "-" jika tidak ada lokasi</small>
+                                <small>Harap kosongkan jika tidak ada membutuhkan sebuah lokasi</small>
                             </div>
                             <div class="form-group">
                                 <label>Keluhan / Saran / Masukan / Kritik / Pertanyaan Umum</label>
                                 <textarea class="form-control" rows="1" id="deskripsi_aduan"
-                                    name="deskripsi_aduan"></textarea>
+                                    name="deskripsi_aduan" required></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="exampleFormControlFile1">Input Photo</label>
-                                <input type="file" name="foto_aduan" class="form-control-file"
+                                <input type="file" name="foto_aduan" class="form-control-file" accept="image/*"
                                     id="exampleFormControlFile1" required>
                                 <small>Foto harus memiliki format JPG/PNG/JPEG dan maksimal
                                     ukuran 10 MB</small>

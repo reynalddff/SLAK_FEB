@@ -8,90 +8,75 @@
             <h1>Dashboard</h1>
         </div>
         <div class="row">
-            <div class="col-lg-6 col-md-12 col-sm-12">
-                <div class="card card-primary">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="card">
                     <div class="card-header">
-                        <h4>Daftar Permintaan Validasi Aduan Kehilangan</h4>
-                        <button style="float:right" class="btn btn-primary text-left">Verifikasi
-                            Kehilangan
-                            <i class="fas fa-hands-helping"></i></button>
+                        <h4>Cari Data</h4>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Nama Pelapora</th>
-                                        <th scope="col">Barang Hilang</th>
-                                        <th scope="col">Tempat Barang Hilang</th>
-                                        <th scope="col">Tanggal Barang Hilang</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td>Larry</td>
-                                        <td>the Bird</td>
-                                        <td>@twitter</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="find-data">
+                            <form action="/admin" method="get" id="find-data">
+                                <input type="text" id="total_aduan_hilang" value="<%= aduan_hilang.total %>" hidden>
+                                <input type="text" id="aduan_hilang_belum" value="<%= aduan_hilang.belum %>" hidden>
+                                <input type="text" id="aduan_hilang_sudah" value="<%= aduan_hilang.sudah %>" hidden>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <select class="form-control text-capitalize" name="tahun" id="tahun">
+                                                <option value="semua" class="text-capitalize">Semua Tahun</option>
+                                                <option class="text-capitalize" value="2020">2020</option>
+                                                <option class="text-capitalize" value="2021">2021</option>
+                                                <option class="text-capitalize" value="2022">2022</option>
+                                                <option class="text-capitalize" value="2023">2023</option>
+                                                <option class="text-capitalize" value="2024">2024</option>
+                                                <option class="text-capitalize" value="2025">2025</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <select class="form-control text-capitalize" name="bulan" id="bulan">
+                                                <option value="semua" class="text-capitalize">Semua Bulan</option>
+                                                <option class="text-capitalize" value="01">Januari</option>
+                                                <option class="text-capitalize" value="02">Februari</option>
+                                                <option class="text-capitalize" value="03">Maret</option>
+                                                <option class="text-capitalize" value="04">April</option>
+                                                <option class="text-capitalize" value="05">Mei</option>
+                                                <option class="text-capitalize" value="06">Juni</option>
+                                                <option class="text-capitalize" value="07">Juli</option>
+                                                <option class="text-capitalize" value="08">Agustus</option>
+                                                <option class="text-capitalize" value="09">September</option>
+                                                <option class="text-capitalize" value="10">Oktober</option>
+                                                <option class="text-capitalize" value="11">November</option>
+                                                <option class="text-capitalize" value="12">Desember</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for=""></label>
+                                            <button class="btn btn-primary">Cari Data</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-md-12 col-sm-12">
-                <div class="card card-primary">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="card">
                     <div class="card-header">
-                        <h4>Daftar Permintaan Validasi Peminjaman Kunci</h4>
-                        <button style="float:right" class="btn btn-primary text-left">Validasi Peminjaman
-                            <i class="fas fa-key"></i></button>
+                        <% if (data_bulan_ini) { %>
+                        <h4>Data Aduan Kehilangan - <%= data_bulan_ini %>, <%= data_tahun_ini %></h4>
+                        <% } else { %>
+                        <h4>Data Aduan Kehilangan - Semua</h4>
+                        <% } %>
                     </div>
                     <div class="card-body">
-                        <% if (peminjaman_kunci.length) { %>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Nama Peminjam</th>
-                                        <th scope="col">No Telepon</th>
-                                        <th scope="col">Ruangan</th>
-                                        <th scope="col">Tanggal Pinjam</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% peminjaman_kunci.forEach((pinjam, index) => { %>
-                                    <tr>
-                                        <th scope="row"><%= index + 1 %></th>
-                                        <td><%= pinjam.User.nama_user %></td>
-                                        <td><%= pinjam.User.telp_user %></td>
-                                        <td><%= pinjam.Kunci.nama_ruangan %></td>
-                                        <td><%= pinjam.tanggal_pinjam %></td>
-                                    </tr>
-                                    <% }) %>
-                                </tbody>
-                            </table>
+                        <div class="data-aduan" style="max-width: 500px; max-height: 500px; margin: 0 auto;">
+                            <canvas id="aduan-kehilangan-chart" width="20" height="20"></canvas>
                         </div>
-                        <% } else { %>
-                        <h3 class="text-center">Tidak ada permintaan validasi peminjaman kunci</h3>
-                        <% } %>
                     </div>
                 </div>
             </div>
@@ -100,3 +85,33 @@
 </div>
 
 <%- include ../partials/footer.ejs %>
+
+<script>
+    $(document).ready(function () {
+        let total_aduan_hilang = $("#total_aduan_hilang").val();
+        let aduan_hilang_belum = $("#aduan_hilang_belum").val();
+        let aduan_hilang_sudah = $("#aduan_hilang_sudah").val();
+        const getAduanKehilangan = () => {
+            const label = ['Total Aduan', 'Belum Selesai', 'Sudah Selesai']
+            const value = [total_aduan_hilang, aduan_hilang_belum, aduan_hilang_sudah];
+            const ctx2 = document.getElementById('aduan-kehilangan-chart').getContext('2d');
+            const chartAduanKehilangan = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: label,
+                    datasets: [{
+                        data: value,
+                        backgroundColor: [
+                            'rgba(255, 206, 86, 0.8)', //kuning
+                            'rgba(255, 99, 132, 0.8)', //merah
+                            'rgba(54, 162, 235, 0.8)', //biru
+                        ]
+                    }],
+                },
+                options: {}
+            });
+        }
+
+        getAduanKehilangan()
+    });
+</script>

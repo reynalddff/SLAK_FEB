@@ -15,7 +15,7 @@ exports.getUsers = async (req, res) => {
             attributes: {
                 exclude: ['password']
             },
-            order: [['RoleId', 'ASC']]
+            order: [['RoleId', 'DESC']]
         });
 
         const notifications = await Notifications.findAll({
@@ -51,7 +51,14 @@ exports.formCreateUser = async (req, res) => {
             ['createdAt', 'DESC']
         ]
     });
-    res.render('admin/manajemen_user/manajemen_user_tambah', { roles, notifications, nama_user: req.user.nama_user, foto_user: req.user.foto_user, error: req.flash('error'), foto_user: req.user.foto_user });
+    res.render('admin/manajemen_user/manajemen_user_tambah', {
+        roles,
+        notifications,
+        nama_user: req.user.nama_user,
+        foto_user: req.user.foto_user,
+        error: req.flash('error'),
+        foto_user: req.user.foto_user
+    });
 }
 
 exports.createUser = async (req, res) => {
@@ -64,6 +71,7 @@ exports.createUser = async (req, res) => {
             password,
             telp_user,
             foto_user: req.file === undefined ? '' : req.file.filename,
+            isValid: "dibuat oleh admin",
             RoleId,
         });
         if (!email && !telp_user) {
@@ -72,7 +80,11 @@ exports.createUser = async (req, res) => {
         req.flash('success', 'User berhasil ditambahkan')
         res.redirect('/admin/manajemen_user')
     } catch (error) {
-        res.send(error)
+        if (error.errors[0].message === 'Duplicate username!') {
+            req.flash('error', 'NIP / NIK telah digunakan! Silahkan gunakan yang lain.');
+            res.redirect('/admin/manajemen_user/tambah');
+        }
+        // res.send(error.errors[0].message)
     }
 }
 
@@ -217,7 +229,8 @@ exports.deleteUser = async (req, res) => {
         };
 
         await user.destroy();
-        res.json({ success: true })
+        req.flash('success', 'User berhasil dihapus')
+        res.redirect("/admin/manajemen_user")
     } catch (error) {
         res.json({ error })
     }
@@ -246,6 +259,7 @@ exports.getProfile = async (req, res) => {
             ]
         });
         res.render('karyawan/edit_profile', {
+            user: req.user,
             notifications,
             user,
             nama_user: req.user.nama_user,
@@ -380,6 +394,7 @@ exports.getAccount = async (req, res) => {
             ]
         });
         res.render('karyawan/edit_pass', {
+            user: req.user,
             notifications,
             user,
             nama_user: req.user.nama_user,
@@ -580,11 +595,23 @@ exports.editAccount = async (req, res) => {
     }
 }
 
-// exports.getNotifications = async (req, res) => {
-//     const notification = await Notifications.findAll({
-//         where: {
-//             tujuan_notif: req.user.RoleId,
-//             UserId: req.user.id
-//         }
-//     });
-// }
+exports.validasiUser = async (req, res) => {
+    const user = await User.findOne({
+        where: {
+            id: req.body.user_id
+        }
+    });
+
+    if (!user) {
+        req.flash('error', 'Gagal melakukan validasi, silahkan coba kembali')
+        res.redirect('/admin/manajemen_user');
+        return;
+    }
+
+    const userValidated = await user.update({
+        isValid: "sudah divalidasi"
+    });
+
+    req.flash('success', `${user.nama_user} telah berhasil divalidasi`)
+    res.redirect('/admin/manajemen_user')
+}

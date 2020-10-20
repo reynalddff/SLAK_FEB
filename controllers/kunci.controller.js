@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { User, Kunci, Peminjaman_Kunci, Notifications } = require('../models');
+const { Kunci, Notifications } = require('../models');
 
 exports.getAllKunci = async (req, res) => {
     const kunci = await Kunci.findAll({});

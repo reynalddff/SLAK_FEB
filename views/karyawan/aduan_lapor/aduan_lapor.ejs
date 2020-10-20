@@ -19,6 +19,18 @@
             </div>
         </div>
         <% } %>
+        <% if (failed.length > 0) { %>
+        <div class="alert alert-danger alert-has-icon alert-dismissible show fade">
+            <div class="alert-icon"><i class="fas fa-thumbs-up"></i></div>
+            <div class="alert-body">
+                <button class="close" data-dismiss="alert">
+                    <span>×</span>
+                </button>
+                <div class="alert-title">Error</div>
+                <%= failed %>
+            </div>
+        </div>
+        <% } %>
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12">
                 <div class="card">
@@ -86,10 +98,16 @@
                                                 data-toggle="tooltip" title="Edit">
                                                 <i class="fas fa-pencil-alt"></i>
                                             </a>
+                                            <% if (aduan.status_aduan === 'sudah' && aduan.Komentar.deskripsi_komentar) { %>
+                                            <button class="btn btn-danger btn-action disabled">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            <% } else { %>
                                             <button class="btn btn-danger btn-action"
                                                 onclick="delete_aduan('<%= aduan.id %>')" data-id="<%= aduan.id %>">
                                                 <i class="fas fa-trash"></i>
                                             </button>
+                                            <% } %>
                                         </td>
                                     </tr>
                                     <% }) %>
@@ -165,17 +183,19 @@
             icon: "warning",
             buttons: true,
             dangerMode: true
-        }).then(() => {
-            swal({
-                title: 'Informasi',
-                text: "Success hapus data aduan",
-                position: 'top-left',
-                icon: 'success',
-                buttons: false,
-                timer: 2000
-            }).then(() => {
-                window.location.assign(`/karyawan/aduan_lapor/delete_aduan/${idAduan}/`);
-            })
+        }).then((willDelete) => {
+            if (willDelete) {
+                swal({
+                    title: 'Informasi',
+                    text: "Success hapus data aduan",
+                    position: 'top-left',
+                    icon: 'success',
+                    buttons: false,
+                    timer: 2000
+                }).then(() => {
+                    window.location.assign(`/karyawan/aduan_lapor/delete_aduan/${idAduan}/`);
+                })
+            }
         })
     }
 
@@ -195,4 +215,6 @@
             $('.deskripsi_komentar').val(komentar)
         });
     });
+
+    $("#aduan-lapor").DataTable({});
 </script>

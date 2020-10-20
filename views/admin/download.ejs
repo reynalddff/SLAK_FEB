@@ -1,0 +1,154 @@
+<%- include ../partials/admin_layout/header.ejs %>
+<%- include ../partials/admin_layout/sidebar.ejs %>
+
+<!-- Main Content -->
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Download Report</h1>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-12 col-sm-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h4>Download Report Aduan Lapor</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="/admin/aduan_lapor/download" method="get">
+                            <div class="form-group">
+                                <select class="form-control text-capitalize" name="tahun" id="tahun">
+                                    <option value="">Pilih Tahun</option>
+                                    <option value="semua" class="text-capitalize">Semua Tahun</option>
+                                    <option class="text-capitalize" value="2020">2020</option>
+                                    <option class="text-capitalize" value="2021">2021</option>
+                                    <option class="text-capitalize" value="2022">2022</option>
+                                    <option class="text-capitalize" value="2023">2023</option>
+                                    <option class="text-capitalize" value="2024">2024</option>
+                                    <option class="text-capitalize" value="2025">2025</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <select class="form-control text-capitalize" name="bulan" id="bulan">
+                                    <option value="">Pilih Bulan</option>
+                                    <option value="semua" class="text-capitalize">Semua Bulan</option>
+                                    <option class="text-capitalize" value="01">Januari</option>
+                                    <option class="text-capitalize" value="02">Februari</option>
+                                    <option class="text-capitalize" value="03">Maret</option>
+                                    <option class="text-capitalize" value="04">April</option>
+                                    <option class="text-capitalize" value="05">Mei</option>
+                                    <option class="text-capitalize" value="06">Juni</option>
+                                    <option class="text-capitalize" value="07">Juli</option>
+                                    <option class="text-capitalize" value="08">Agustus</option>
+                                    <option class="text-capitalize" value="09">September</option>
+                                    <option class="text-capitalize" value="10">Oktober</option>
+                                    <option class="text-capitalize" value="11">November</option>
+                                    <option class="text-capitalize" value="12">Desember</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-success btn-icon" style="width: 100%;">Download ke Excel <i
+                                        class="fas fa-file"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12 col-sm-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h4>Download Report Aduan Hilang</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="/admin/aduan_hilang/download" method="get">
+                            <div class="form-group">
+                                <select class="form-control text-capitalize" name="tahun" id="tahun">
+                                    <option value="">Pilih Tahun</option>
+                                    <option value="semua" class="text-capitalize">Semua Tahun</option>
+                                    <option class="text-capitalize" value="2020">2020</option>
+                                    <option class="text-capitalize" value="2021">2021</option>
+                                    <option class="text-capitalize" value="2022">2022</option>
+                                    <option class="text-capitalize" value="2023">2023</option>
+                                    <option class="text-capitalize" value="2024">2024</option>
+                                    <option class="text-capitalize" value="2025">2025</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <select class="form-control text-capitalize" name="bulan" id="bulan">
+                                    <option value="">Pilih Bulan</option>
+                                    <option value="semua" class="text-capitalize">Semua Bulan</option>
+                                    <option class="text-capitalize" value="01">Januari</option>
+                                    <option class="text-capitalize" value="02">Februari</option>
+                                    <option class="text-capitalize" value="03">Maret</option>
+                                    <option class="text-capitalize" value="04">April</option>
+                                    <option class="text-capitalize" value="05">Mei</option>
+                                    <option class="text-capitalize" value="06">Juni</option>
+                                    <option class="text-capitalize" value="07">Juli</option>
+                                    <option class="text-capitalize" value="08">Agustus</option>
+                                    <option class="text-capitalize" value="09">September</option>
+                                    <option class="text-capitalize" value="10">Oktober</option>
+                                    <option class="text-capitalize" value="11">November</option>
+                                    <option class="text-capitalize" value="12">Desember</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-success btn-icon" style="width: 100%;">Download ke Excel <i
+                                        class="fas fa-file"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-lg-4 col-md-12 col-sm-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h4>Download Report Peminjaman Kunci</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="" method="get">
+                            <div class="form-group">
+                                <select class="form-control text-capitalize" name="tahun" id="tahun">
+                                    <option value="">Pilih Tahun</option>
+                                    <option value="semua" class="text-capitalize">Semua Tahun</option>
+                                    <option class="text-capitalize" value="2020">2020</option>
+                                    <option class="text-capitalize" value="2021">2021</option>
+                                    <option class="text-capitalize" value="2022">2022</option>
+                                    <option class="text-capitalize" value="2023">2023</option>
+                                    <option class="text-capitalize" value="2024">2024</option>
+                                    <option class="text-capitalize" value="2025">2025</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <select class="form-control text-capitalize" name="bulan" id="bulan">
+                                    <option value="">Pilih Bulan</option>
+                                    <option value="semua" class="text-capitalize">Semua Bulan</option>
+                                    <option class="text-capitalize" value="01">Januari</option>
+                                    <option class="text-capitalize" value="02">Februari</option>
+                                    <option class="text-capitalize" value="03">Maret</option>
+                                    <option class="text-capitalize" value="04">April</option>
+                                    <option class="text-capitalize" value="05">Mei</option>
+                                    <option class="text-capitalize" value="06">Juni</option>
+                                    <option class="text-capitalize" value="07">Juli</option>
+                                    <option class="text-capitalize" value="08">Agustus</option>
+                                    <option class="text-capitalize" value="09">September</option>
+                                    <option class="text-capitalize" value="10">Oktober</option>
+                                    <option class="text-capitalize" value="11">November</option>
+                                    <option class="text-capitalize" value="12">Desember</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for=""></label>
+                                <button class="btn btn-success btn-icon" style="width: 100%;">Download ke Excel <i
+                                        class="fas fa-file"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </section>
+</div>
+
+<%- include ../partials/footer.ejs %>

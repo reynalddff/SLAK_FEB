@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Kunci.associate = function (models) {
     // associations can be defined here
-    Kunci.hasMany(models.Peminjaman_Kunci, { onDelete: 'CASCADE', hooks: true })
+    Kunci.hasMany(models.Detail_Peminjaman, { onDelete: 'CASCADE', hooks: true })
   };
   return Kunci;
 };

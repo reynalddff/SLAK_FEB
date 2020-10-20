@@ -39,13 +39,13 @@
                     </div>
                     <div class="card-body">
                         <!-- Pake modal -->
-                        <a href="/admin/pinjam_kunci/tambah_kunci/form" style="float:left"
+                        <a href="/admin/pinjam_kunci/tambah_kunci/form" style="float:right"
                             class="btn btn-success mb-4">Tambah
                             Kunci Ruangan
                             <i class="fas fa-plus"></i>
                         </a>
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover" id="list-kunci">
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
@@ -159,5 +159,7 @@
             }
         })
     }
+
+    $("#list-kunci").DataTable({});
 
 </script>

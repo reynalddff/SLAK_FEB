@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
+      integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I"
+      crossorigin="anonymous"
+    />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- TEMPLATE BUAT PRINT OUT KE PDF
+    <br /> -->
+    <div id="header-report" class="col-md-12 mt-3">				
+      <table style="width: 100%;">
+        <tr>
+          <td width="100px">
+            <img src="https://filkom.ub.ac.id/assets/images/xub-kemristek.jpg.pagespeed.ic.CSb-sGOSLo.webp" style="width: 100px; height:auto;" data-pagespeed-url-hash="2031870589" onload="pagespeed.CriticalImages.checkImageForCriticality(this);">
+          </td>
+          <td>
+            <center>
+              <h5 style="margin: 0px;font-family:Arial;font-size:12pt;">
+                UNIVERSITAS BRAWIJAYA<br/>
+                <b>FAKULTAS EKONOMI DAN BISNIS</b>
+              </h5>
+              <div style="width:90%">
+                <h6 style="margin: 0px; font-size:9pt;font-family:Arial;">Jl. MT. Haryono 165 Malang 65145</h6>
+                <h6 style="margin: 0px; font-size:9pt;font-family:Arial;">Telp.: +62-341-555000; Fax : +62-341-553834</h6>
+                <h6 style="margin: 0px; font-size:9pt;font-family:Arial;">https://www.feb.ub.ac.id &nbsp; &nbsp;E-mail : feb@ub.ac.id</h6>
+              </div>
+            </center>	
+          </td>
+        </tr>
+      </table>
+    <main>
+      <div class="container">
+        <div class="title text-center mt-5">
+          <h3 class="font-weight-bold">SURAT KEHILANGAN BARANG</h3>
+        </div>
+        <div class="main-description mt-3">
+            <div class="nama-pelapor">
+                Nama Pelapor<span style="margin-left: 110px">:</span>
+                <span class="text-capitalize"> <%= nama_pelapor %> </span>
+            </div>
+            <div class="nama-pelapor mt-2">
+                Contact Pelapor<span style="margin-left: 100px">:</span>
+                <span class="text-capitalize"> <%= contact_pelapor %> </span>
+            </div>
+            <div class="judul-aduan mt-2">
+                Judul Aduan<span style="margin-left: 125px">:</span>
+                <span class="text-capitalize"> <%= judul_aduan %> </span>
+            </div>
+            <div class="deskripsi-aduan mt-2">
+                <p>
+                Deskripsi Aduan<span style="margin-left: 100px">:</span>
+                <span class="text-capitalize"> <%= deskripsi_aduan %> </span>
+                </p>
+            </div>
+            <div class="lokasi-aduan mt-2">
+                <p>
+                lokasi Kehilangan<span style="margin-left: 95px">:</span>
+                <span class="text-capitalize"> <%= lokasi_aduan %> </span>
+                </p>
+            </div>
+            <div class="foto-aduan mt-2">
+                <p>Foto Barang Terkait<span style="margin-left: 80px">:</span></p>
+                <br />
+                <img
+                class="img-thumbnail"
+                src="<%= foto_barang %>"
+                alt=""
+                style="width: 250px; height: 250px; background-color: white"
+                />
+            </div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <div class="container my-5">
+        <div style="float: right;">
+          <div class="ttd-pelapor">
+              Malang, <br>
+          </div>
+          <!-- <div class="box" style="border: solid black 1px; height: 100px; width: 300px;"></div> -->
+          <div class="mb-5" style="margin-top: 80px;">
+            .......................
+            <br>
+            <%= nama_pelapor %>
+            <br>
+            <%= username %>
+          </div>
+        </div>
+      </div>
+  </footer>
+  </body>
+  <script>
+    window.onload = () => {
+      window.print();
+    };
+  </script>
+</html>

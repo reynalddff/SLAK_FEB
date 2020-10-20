@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
+      integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I"
+      crossorigin="anonymous"
+    />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- TEMPLATE BUAT PRINT OUT KE PDF
+    <br /> -->
+    <header class="mt-5" style="margin: 0 auto;">
+      <div class="container" >
+        <div class="clearfix" style="max-width: 500px">
+          <img
+            src="/images/logo-ub.png"
+            class="float-left mr-3"
+            alt=""
+            style="width: 120px; height: 120px; background-color: white"
+          />
+          <div class="text">
+            <p class="text-uppercase" style="font-weight: 500">
+              universitas brawijaya malang <br />
+              fakultas ekonomi dan bisnis
+            </p>
+            <div style="border-top: 2px dotted #8c8b8b"></div>
+            <p class="text-uppercase" style="font-weight: 300">
+              pengelola sistem informasi insfrastruktur TI dan kehumasan
+            </p>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main>
+      <div class="container">
+        <div class="title text-center mt-3">
+          <h3 class="font-weight-bold">SURAT KEHILANGAN BARANG</h3>
+        </div>
+        <div class="main-description mt-5">
+            <div class="nama-pelapor mt-2">
+                <div class="row"></div>
+                Nama Pelapor<span class="ml-5">:</span>
+                <span class="text-capitalize"> <%= nama_pelapor %> </span>
+            </div>
+            <div class="nama-pelapor mt-2">
+                <span>Contact Pelapor</span> <span class="ml-5">:</span>
+                <span class="text-capitalize"> <%= contact_pelapor %> </span>
+            </div>
+            <div class="judul-aduan mt-2">
+                Judul Aduan<span style="margin-left: 100px">:</span>
+                <span class="text-capitalize"> <%= judul_aduan %> </span>
+            </div>
+            <div class="deskripsi-aduan mt-2">
+                <p>
+                Deskripsi Aduan<span style="margin-left: 80px">:</span>
+                <span class="text-capitalize"> <%= deskripsi_aduan %> </span>
+                </p>
+            </div>
+            <div class="lokasi-aduan mt-2">
+                <p>
+                lokasi Aduan<span style="margin-left: 100px">:</span>
+                <span class="text-capitalize"> <%= lokasi_aduan %> </span>
+                </p>
+            </div>
+            <div class="foto-aduan mt-2">
+                <p>Foto Barang Terkait<span style="margin-left: 55px">:</span></p>
+                <br />
+                <img
+                class="img-thumbnail"
+                src="<%= foto_barang %>"
+                alt=""
+                style="width: 250px; height: 250px; background-color: white"
+                />
+            </div>
+        </div>
+      </div>
+    </main>
+    <footer class="my-5 mr-5" style="float: right;">
+        <div class="container">
+            <div class="ttd-pelapor">
+                Tertanda, <%= nama_pelapor %>
+            </div>
+            <div class="box" style="border: solid black 1px; height: 150px; width: 300px;"></div>
+        </div>
+    </footer>
+  </body>
+  <script>
+    // window.onload = () => {
+    //   window.print();
+    // };
+  </script>
+</html>

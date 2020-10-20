@@ -19,37 +19,61 @@
             </div>
         </div>
         <% } %>
-        <% if (kunciDipinjam === null && menungguValidasi === null) { %>
+        <% if (!dataPinjam) { %>
         <div class="row">
-            <!-- <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="card card-primary">
                     <div class="card-header">
-                        <h4> Cari Kunci </h4>
+                        <h4>Selamat Datang!</h4>
+                        <div class="card-header-action">
+                            <a data-collapse="#mycard-collapse" class="btn btn-icon btn-info" href="#"><i
+                                    class="fas fa-minus"></i></a>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <form action="" method="POST">
-                            <div class="form-group">
-                                <label for="datepicker">Pilih Tanggal Pinjam</label>
-                                <input type="text" class="form-control" value="" id="datepicker">
-                            </div>
-                            <button class="btn btn-primary" style="float: right;"> Cari Kunci </button>
-                        </form>
+                    <div class="collapse-show" id="mycard-collapse">
+                        <div class="card-body">
+                            <p>
+                                Hi <span class=" font-weight-bold"><%= user.nama_user %></span>! Fitur peminjaman kunci
+                                merupakan salah satu fitur dari sistem SiNgadu. Peminjaman kunci hanya diberlakukan
+                                untuk
+                                <span class="font-weight-bold">Satu Hari</span> saja. Pengembalian kunci paling telat
+                                adalah
+                                hari setelah peminjaman kunci pukul 12 siang. Untuk informasi lebih lanjut, silahkan
+                                menghadap ke kantor satpam di Gedung Dekanan Lama lantai 1.
+                            </p>
+                        </div>
                     </div>
+                    <!-- <div class="card-footer">
+                    </div> -->
                 </div>
-            </div> -->
+            </div>
             <div class="col-lg-12 col-md-12 col-sm-12">
                 <div class="card card-primary">
                     <div class="card-header">
-                        <h4>Daftar Kunci</h4>
+                        <h4>Daftar Kunci <%=tanggal %></h4>
                     </div>
                     <div class="card-body">
+                        <input type="hidden" class="tanggal_dipilih" name="id" value="<%= tanggal ? tanggal : today %>">
+                        <form action="/karyawan/pinjam_kunci" method="get" id="cari-kunci">
+                            <div class="form-group">
+                                <label for="datepicker">Pilih Tanggal Pinjam</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id=""><i class="fas fa-calendar-alt"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control datepicker" id="pilih_tanggal"
+                                        value="<%= tanggal %>" placeholder="Cari tanggal pinjam" name="tanggal">
+                                </div>
+                            </div>
+                        </form>
                         <div class="table-responsive">
-                            <table id="example" class="table" style="width:100%">
+                            <table id="list-kunci" class="table">
                                 <thead>
                                     <tr>
                                         <th>#</th>
                                         <th>Ruangan</th>
                                         <th>Status Kunci</th>
+                                        <th>Status Peminjaman</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -58,73 +82,62 @@
                                     <tr>
                                         <td> <%= index + 1 %> </td>
                                         <td><%= kunci.nama_ruangan %></td>
-                                        <% if (kunci.status_kunci === "tersedia") {  %>
+                                        <% if (kunci.status_kunci === "tersedia") { %>
+                                        <td><span class="badge badge-primary"><%= kunci.status_kunci %></span></td>
+                                            <% if (!kunci.Detail_Peminjamans.length) { %>
+                                        <td><span class="badge badge-primary">tersedia</span></td>
                                         <td>
-                                            <div class="badge badge-primary">Tersedia</div>
+                                            <a href="#modalPinjamKunci" type="button" class="btn btn-success"
+                                                id="pinjam-kunci" data-toggle="modal" data-tanggal-pinjam="<%=tanggal%>"
+                                                data-target="#modalPinjamKunci" data-id="<%=kunci.id %>"
+                                                data-nama_ruangan="<%= kunci.nama_ruangan %>">
+                                                Pinjam Kunci
+                                            </a>
                                         </td>
-                                        <td><a href="/karyawan/pinjam_kunci/konfirmasi/<%= kunci.id %>"
-                                                class="btn btn-primary">Pinjam Kunci</a></td>
+                                            <% } %>
+                                            <% kunci.Detail_Peminjamans.forEach((detail) => { %>
+                                                <% if (detail.status === "dikembalikan") { %>
+                                        <td><span class="badge badge-primary">tersedia</span></td>
+                                        <td>
+                                            <a href="#modalPinjamKunci" type="button" id="pinjam-kunci"
+                                                class="btn btn-success" data-toggle="modal"
+                                                data-tanggal_pinjam="<%=tanggal%>" data-target="#modalPinjamKunci"
+                                                data-id="<%=kunci.id %>" data-nama_ruangan="<%= kunci.nama_ruangan %>">
+                                                Pinjam Kunci
+                                            </a>
+                                            </td>
+                                                <% } else if (detail.status === "dipinjam"|| detail.status === "menunggu validasi") { %>
+                                        <td><span class="badge badge-danger"> Has been booked </span></td>
+                                        <td>
+                                            <a href="#modalPinjamKunci" type="button" class="btn btn-secondary disabled"
+                                                data-toggle="modal" data-target="#modalPinjamKunci"
+                                                data-id="<%=kunci.id %>" data-nama_ruangan="<%= kunci.nama_ruangan %>">
+                                                Pinjam Kunci
+                                            </a>
+                                        </td>
+                                                <% } %>
+                                            <% }) %>
+                                        <% } else if (kunci.status_kunci === "tidak tersedia" || kunci.status_kunci === "dipinjam") { %>
+                                        <td><span class="badge badge-danger"><%= kunci.status_kunci %></span></td>
+                                        <td><span class="badge badge-danger">Is not available</span></td>
+                                        <td>
+                                            <a href="#modalPinjamKunci" type="button" class="btn btn-secondary disabled"
+                                                data-toggle="modal" data-target="#modalPinjamKunci"
+                                                data-id="<%=kunci.id %>" data-nama_ruangan="<%= kunci.nama_ruangan %>">
+                                                Pinjam Kunci
+                                            </a>
+                                        </td>
                                         <% } else if (kunci.status_kunci === "renovasi") { %>
+                                        <td><span class="badge badge-warning"><%= kunci.status_kunci %></span></td>
+                                        <td><span class="badge badge-danger">Is not available</span></td>
                                         <td>
-                                            <div class="badge badge-warning">Renovasi</div>
+                                            <a href="#modalPinjamKunci" type="button" class="btn btn-secondary disabled"
+                                                data-toggle="modal" data-target="#modalPinjamKunci"
+                                                data-id="<%=kunci.id %>" data-nama_ruangan="<%= kunci.nama_ruangan %>">
+                                                Pinjam Kunci
+                                            </a>
                                         </td>
-                                        <td><a href="pinjam_kunci_form.html"
-                                                class="btn btn-secondary disabled">Pinjam</a></td>
-                                        <% } else if (kunci.status_kunci === "dipinjam") { %>
-                                        <td>
-                                            <div class="badge badge-danger">Dipinjam</div>
-                                        </td>
-                                        <td><a href="pinjam_kunci_form.html"
-                                                class="btn btn-secondary disabled">Pinjam</a></td>
-                                        <% } else { %>
-                                        <td>
-                                            <div class="badge badge-dark">Tidak Tersedia</div>
-                                        </td>
-                                        <td><a href="pinjam_kunci_form.html"
-                                                class="btn btn-secondary disabled">Pinjam</a></td>
-                                        <% }  %>
-                                    </tr>
-                                    <%})%>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-12">
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h4>Riwayat Peminjaman Kunci: <%= nama_user %></h4>
-                    </div>
-                    <div class="card-body">
-                        <!-- Kurang datepicker aja -->
-                        <div class="table-responsive">
-                            <table id="example" class="table" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Ruangan</th>
-                                        <th>Tanggal Pinjam</th>
-                                        <th>Tanggal Kembali</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% riwayatMinjamKunci.forEach((riwayat, index) => { %>
-                                    <tr>
-                                        <td> <%= index + 1 %> </td>
-                                        <td><%= riwayat.Kunci.nama_ruangan %></td>
-                                        <td><%= riwayat.tanggal_pinjam %></td>
-                                        <td><%= riwayat.tanggal_kembali %></td>
-                                        <% if (riwayat.status_peminjaman === 'dikembalikan'){ %>
-                                        <td>
-                                            <div class="badge badge-success">Sudah Dikembalikan</div>
-                                        </td>
-                                        <% } else { %>
-                                        <td>
-                                            <div class="badge badge-dark">Menunggu Validasi</div>
-                                        </td>
-                                        <%  } %>
+                                        <% } %>
                                     </tr>
                                     <%})%>
                                 </tbody>
@@ -134,70 +147,86 @@
                 </div>
             </div>
         </div>
-        <% } else if (kunciDipinjam) { %>
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12">
-                <div class="card card-warning">
-                    <div class="card-header">
-                        <h4>Daftar Kunci</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center">
-                            <h3 class="mt-3 mb-4">
-                                Kamu belum mengembalikan kunci, silahkan ke ruang satpam di Gedung Rektorat Lama lt 1
-                                <br>
-                                untuk mengembalikan kunci.
-                            </h3>
-                            <div class="img-svg">
-                                <img src="/images/svg/undraw_things.svg" style="width:20rem" alt="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <% } else if (menungguValidasi) { %>
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12">
-                <div class="card card-warning">
-                    <div class="card-header">
-                        <h4>Daftar Kunci</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center">
-                            <h3 class="mt-3 mb-4">
-                                Peminjaman kunci sedang diproses. Jika proses dirasa lama, silahkan ke ruang satpam
-                                <br>
-                                di gedung Rektorat Lama lt 1
-                            </h3>
-                            <div class="img-svg">
-                                <img src="/images/svg/undraw_things.svg" style="width:20rem" alt="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <% } else { %>
+        <h1>Silahkan datang ke kantor satpam di lantai 1 gedung dekanan lama untuk mengambil kunci yang tadi dipinjam,
+            Terimakasih!</h1>
         <% } %>
+    </section>
 </div>
-</section>
+
+<!-- Modal -->
+<div class="modal fade" id="modalPinjamKunci" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Pinjam Kunci</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="POST">
+                    <input type="hidden" id="id-kunci" name="id_kunci" value="">
+                    <div class="form-group">
+                        <label for="nama-kunci">Nama Kunci</label>
+                        <input type="text" class="form-control" name="nama_kunci" id="nama-kunci" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="keperluan">Keperluan</label>
+                        <input type="text" class="form-control" name="keperluan" id="keperluan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="identitas">Identitas Penjamin</label>
+                        <input type="text" class="form-control" name="identitas" id="identitas" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tanggal_pinjam">Tanggal Pinjam</label>
+                        <input type="text" class="form-control" name="tanggal_pinjam" id="tanggal_pinjam" readonly>
+                    </div>
+                    <button type=" submit" class="btn btn-primary" style="float: right;">Pinjam Kunci</button>
+                    <button type="button" class="btn btn-secondary mr-2" style="float: right;"
+                        data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <%- include ../../partials/footer.ejs %>
 
 <script>
     $(function () {
-        $("#datepicker").datepicker({
-            // changeYear: true,
-            minDate: 0,
-            changeMonth: true,
-            showButtonPanel: true,
-            dateFormat: "yy-m-dd"
+        $(".datepicker").flatpickr({
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            onChange: function (selectedDates, dateStr, instance) {
+                $('#cari-kunci').submit();
+                console.log(selectedDates);
+                console.log(dateStr)
+                $('#tanggal_pinjam').val($(this).val());
+            },
         });
-        $("#datepicker").change(function () {
-            var date = $(this).datepicker("getDate");
-            console.log(date);
-        });
-        // $("#datepicker").datepicker("show");
+
+        // $('.tanggal_dipilih').change(function () {
+        //     $('.datepicker').val($(this).val());
+        // });
     });
+
+    $(document).ready(function () {
+        $('#list-kunci').on('click', '#pinjam-kunci', function () {
+            const id = $(this).data('id')
+            const nama = $(this).data('nama_ruangan');
+            const tanggal_pinjam = $('#pilih_tanggal').val()
+
+            $('#modalPinjamKunci').modal('show');
+            $('#id-kunci').val(id);
+            $('#nama-kunci').val(nama);
+            $('#tanggal_pinjam').val(tanggal_pinjam)
+        });
+    });
+
+    $("#list-kunci").DataTable({});
 </script>

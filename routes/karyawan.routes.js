@@ -4,7 +4,7 @@ const moment = require('moment')
 const Op = require("sequelize").Op;
 
 // models
-const { Aduan_Lapor, Role, Peminjaman_Kunci, Kunci, User, Notifications } = require('./../models');
+const { Aduan_Lapor, Role, Kunci, User, Notifications } = require('./../models');
 //middleware auth
 const check = require('./../middlewares/rolePermission');
 // upload multer
@@ -26,15 +26,6 @@ router.get('/', async (req, res, next) => {
     }
   });
 
-  const peminjaman_kunci = await Peminjaman_Kunci.findAll({
-    where: {
-      UserId: req.user.id
-    },
-    include: [
-      { model: Kunci }, { model: User }
-    ]
-  });
-
   const notifications = await Notifications.findAll({
     where: {
       tujuan_notif: req.user.id
@@ -46,10 +37,9 @@ router.get('/', async (req, res, next) => {
 
   res.render('karyawan/dashboard', {
     // nama_user: req.user.name,
+    user: req.user,
     aduans,
-    peminjaman_kunci,
     notifications,
-    tanggal_pinjam: moment(peminjaman_kunci.tanggal_pinjam).format('dddd, DD MMMM YYYY'),
     nama_user: req.user.nama_user,
     foto_user: req.user.foto_user
   });
@@ -78,7 +68,13 @@ router.get('/aduan_lapor/form', async (req, res) => {
       tujuan_notif: req.user.id
     }
   });
-  res.render('karyawan/aduan_lapor/aduan_lapor_form', { roles, notifications, nama_user: req.user.nama_user, foto_user: req.user.foto_user, UserId: req.user.id })
+  res.render('karyawan/aduan_lapor/aduan_lapor_form', { 
+    roles, 
+    notifications, 
+    user: req.user,
+    nama_user: req.user.nama_user, 
+    foto_user: req.user.foto_user, 
+    UserId: req.user.id })
 });
 router.post('/aduan_lapor/form', upload.single('foto_aduan'), createAduan);
 router.get('/aduan_lapor/delete_aduan/:id', deleteAduan)
@@ -89,32 +85,9 @@ router.post('/aduan_lapor/komentar/:id', memberikanKomentar);
 
 // kunci
 router.get('/pinjam_kunci', getPeminjamanKunci);
-router.get('/pinjam_kunci/konfirmasi/:id', getContactProfile2);
-router.post('/pinjam_kunci/konfirmasi/:id', updateContactProfile2);
-router.get('/pinjam_kunci/form/:id', async (req, res) => {
-  const getKunci = await Kunci.findOne({
-    where: {
-      id: req.params.id
-    }
-  });
-  const notifications = await Notifications.findAll({
-    where: {
-      tujuan_notif: req.user.id
-    },
-    order: [
-      ['createdAt', 'DESC']
-    ]
-  });
-  res.render('karyawan/pinjam_kunci/pinjam_kunci_form', {
-    notifications,
-    nama_user: req.user.nama_user,
-    kunci: getKunci,
-    tanggal_pinjam: moment(getKunci.tanggal_pinjam).format('dddd, DD MMMM YYYY'),
-    tanggal_kembali: moment(getKunci.tanggal_pinjam).add(1, "d").format('dddd, DD MMMM YYYY'),
-    foto_user: req.user.foto_user
-  })
-});
-router.post('/pinjam_kunci/form/:id', pinjamKunci);
+router.post('/pinjam_kunci', pinjamKunci);
+// router.get('/pinjam_kunci/konfirmasi/:id', getContactProfile2);
+// router.post('/pinjam_kunci/konfirmasi/:id', updateContactProfile2);
 
 // aduan hilang
 router.get('/aduan_hilang', getAduanKehilangan);
@@ -129,7 +102,12 @@ router.get('/aduan_hilang/form', async (req, res) => {
       ['createdAt', 'DESC']
     ]
   });
-  res.render('karyawan/aduan_hilang/aduan_barang_hilang_form', { notifications, nama_user: req.user.nama_user, foto_user: req.user.foto_user })
+  res.render('karyawan/aduan_hilang/aduan_barang_hilang_form', {
+    notifications,
+    nama_user: req.user.nama_user,
+    foto_user: req.user.foto_user,
+    user: req.user,
+  })
 })
 router.post('/aduan_hilang/form', upload.single('foto_barang'), createAduanHilang);
 router.get('/aduan_hilang/delete_aduan/:id', deleteAduanHilang);
