@@ -1,64 +1,113 @@
-const { User, Kunci, Peminjaman_Kunci, Notifications } = require("./../models");
+const { User, Kunci, Notifications, Data_Peminjaman, Detail_Peminjaman, Data_Pengembalian } = require("./../models");
 const Op = require("sequelize").Op;
 const moment = require("moment");
 
 require("express-async-errors");
 
 exports.getPeminjamanKunci = async (req, res) => {
-  const kunci = await Kunci.findAll({
-    include: [{ model: Peminjaman_Kunci }],
-    order: [["nama_ruangan", "ASC"]],
-  });
-
-  const kunciDipinjam = await Peminjaman_Kunci.findOne({
-    include: [{ model: User }, { model: Kunci }],
-    where: {
-      UserId: req.user.id,
-      status_peminjaman: "dipinjam",
-    },
-  });
-
-  const menungguValidasi = await Peminjaman_Kunci.findOne({
-    include: [{ model: User }, { model: Kunci }],
-    where: {
-      UserId: req.user.id,
-      status_peminjaman: "menunggu validasi",
-    },
-  });
-
-  const riwayatMinjamKunci = await Peminjaman_Kunci.findAll({
-    include: [{ model: User }, { model: Kunci }],
-    order: [
-      ["tanggal_pinjam", "DESC"],
-      ["status_peminjaman", "DESC"],
-    ],
-    where: {
-      UserId: req.user.id,
-    },
-  });
-
   const notifications = await Notifications.findAll({
     where: {
       tujuan_notif: req.user.id,
     },
   });
+  const findDataByStatusPeminjaman = (arr, status_peminjaman) => {
+    return arr.filter((obj) =>
+      obj.Detail_Peminjamans.some(
+        (detail) =>
+          detail.Data_Peminjaman.status_peminjaman === status_peminjaman
+      )
+    );
+  };
+
+  const dataPinjam = await Data_Peminjaman.findOne({
+    where: {
+      status_peminjaman: "menunggu validasi" || "sudah divalidasi",
+      UserId: req.user.id
+    }
+  })
+
+  const { tanggal } = req.query;
+
+  const today = moment().clone().format("yyy-MM-DD");
+
+  if (!tanggal) {
+    const kunci = await Kunci.findAll({
+      include: [
+        {
+          model: Detail_Peminjaman,
+          include: {
+            model: Data_Peminjaman,
+            where: { tanggal_pinjam: today },
+          },
+        },
+      ],
+      order: [["nama_ruangan", "ASC"]]
+    });
+    res.render("karyawan/pinjam_kunci/pinjam_kunci", {
+      dataPinjam,
+      today,
+      kunci,
+      notifications,
+      tanggal: today,
+      user: req.user,
+      nama_user: req.user.nama_user,
+      success: req.flash("success"),
+      failed: req.flash("failed"),
+      foto_user: req.user.foto_user,
+    });
+    return;
+  } else if (tanggal) {
+    const kunci = await Kunci.findAll({
+      include: [
+        {
+          model: Detail_Peminjaman,
+          include: {
+            model: Data_Peminjaman,
+            where: { tanggal_pinjam: tanggal },
+          },
+        },
+      ],
+    });
+
+    res.render("karyawan/pinjam_kunci/pinjam_kunci", {
+      dataPinjam,
+      user: req.user,
+      kunci,
+      notifications,
+      tanggal,
+      nama_user: req.user.nama_user,
+      success: req.flash("success"),
+      failed: req.flash("failed"),
+      foto_user: req.user.foto_user,
+    });
+    return;
+  }
+
+  const kunci = await Kunci.findAll({
+    include: [
+      {
+        model: Detail_Peminjaman,
+        include: {
+          model: Data_Peminjaman,
+          where: { tanggal_pinjam: today },
+        },
+      },
+    ],
+  });
 
   res.render("karyawan/pinjam_kunci/pinjam_kunci", {
+    dataPinjam,
+    user: req.user,
     kunci,
-    kunciDipinjam,
-    menungguValidasi,
-    riwayatMinjamKunci,
+    tanggal: today,
     notifications,
     nama_user: req.user.nama_user,
     success: req.flash("success"),
     failed: req.flash("failed"),
     foto_user: req.user.foto_user,
   });
+  return;
 };
-
-// exports.getKunciTersedia = async (req, res) => {
-
-// }
 
 exports.getContactProfile2 = async (req, res) => {
   const id = req.params.id;
@@ -76,6 +125,7 @@ exports.getContactProfile2 = async (req, res) => {
   });
 
   res.render("karyawan/pinjam_kunci/pinjam_kunci_konfirmasi_contact", {
+    user: req.user,
     user,
     notifications,
     nama_user: req.user.nama_user,
@@ -104,91 +154,76 @@ exports.updateContactProfile2 = async (req, res) => {
 };
 
 exports.pinjamKunci = async (req, res) => {
+  const { id_kunci, nama_kunci, tanggal_pinjam, keperluan, identitas } = req.body;
   const kunci = await Kunci.findOne({
-    where: { id: req.params.id },
+    where: { id: id_kunci },
   });
 
-  if (kunci.status_kunci === "tersedia") {
-    if (req.body.keperluan) {
-      if (req.body.start_date) {
-        // update status kunci
-        kunci.update({ status_kunci: "dipinjam" });
+  const pinjamKunci = await Data_Peminjaman.create({
+    keperluan,
+    identitas,
+    status_peminjaman: "menunggu validasi",
+    tanggal_pinjam: tanggal_pinjam,
+    tanggal_kembali: moment(tanggal_pinjam).add(1, "days"),
+    UserId: req.user.id,
+  });
 
-        // pinjam kunci
-        const pinjam_kunci = await Peminjaman_Kunci.create({
-          tanggal_pinjam: req.body.start_date,
-          tanggal_kembali: req.body.end_date,
-          keperluan: req.body.keperluan,
-          status_peminjaman: "menunggu validasi",
-          UserId: req.user.id,
-          KunciId: req.params.id,
-        });
+  const pinjam_kunci_detail = await Detail_Peminjaman.create({
+    status: "menunggu validasi",
+    DataPeminjamanId: pinjamKunci.id,
+    KunciId: id_kunci,
+  });
 
-        // create notifications untuk satpam
-        await Notifications.create({
-          layananId: pinjam_kunci.id,
-          jenis_notif: "peminjaman kunci",
-          deskripsi_notif: `Permintaan peminjaman kunci ${kunci.nama_ruangan} dari ${req.user.nama_user}`,
-          tujuan_notif: "7", //Role Id Satpam
-          UserId: req.user.id,
-        });
+  await Notifications.create({
+    layananId: pinjamKunci.id,
+    jenis_notif: "peminjaman kunci",
+    deskripsi_notif: `Permintaan peminjaman kunci ${kunci.nama_ruangan} dari ${req.user.nama_user}`,
+    tujuan_notif: "7", //Role Id Satpam
+    UserId: req.user.id,
+  });
 
-        req.flash(
-          "success",
-          "Peminjaman kunci berhasil diajukan. Silahkan menunggu validasi dari Satpam"
-        );
-        res.redirect("/karyawan/pinjam_kunci");
-      } else {
-        req.flash(
-          "failed",
-          "Tanggal belum dipilih, silahkan memilih tanggal yang sesuai."
-        );
-        res.redirect("/karyawan/pinjam_kunci");
-      }
-    } else {
-      req.flash(
-        "failed",
-        "Tanggal belum dipilih, silahkan memilih tanggal yang sesuai."
-      );
-      res.redirect("/karyawan/pinjam_kunci");
-    }
-  } else {
-    req.flash(
-      "failed",
-      "Input field keperluan untuk meminjam kunci diwajibkan untuk diisi."
-    );
-    res.redirect("/karyawan/pinjam_kunci");
-  }
+
+  req.flash(
+    "success",
+    "Peminjaman kunci berhasil diajukan. Silahkan menunggu validasi dari Satpam"
+  );
+  res.redirect("/karyawan/pinjam_kunci");
 };
 
-// buat satpam
+// buat satpam & admin
 exports.validasiPinjamKunci = async (req, res) => {
-  const pinjam_kunci = await Peminjaman_Kunci.findOne({
-    where: { id: req.params.id },
+  const dataPinjamKunci = await Data_Peminjaman.findOne({
+    where: {id: req.params.id},
+    include: [{model: User}]
   });
-  const kunci = await Kunci.findOne({ where: { id: pinjam_kunci.KunciId } });
-  const userPinjamKunci = await User.findOne({
-    where: { id: pinjam_kunci.UserId },
+
+  const dataDetailPinjamKunci = await Detail_Peminjaman.findOne({
+    where: {
+      DataPeminjamanId: dataPinjamKunci.id
+    },
+    include: [
+      { model: Kunci }, 
+      { model: Data_Peminjaman, include: [{model: User}] }
+    ],
   });
-  if (!pinjam_kunci) {
-    return res.status(200).send({
-      msg: "peminjaman kunci yang dicari tidak ditemukan",
-    });
-  }
-  if (pinjam_kunci.status_peminjaman === "menunggu validasi") {
-    const update = await pinjam_kunci.update({
-      status_peminjaman: "dipinjam",
-    });
 
-    await kunci.update({ status_kunci: "dipinjam" });
-
+  if (dataPinjamKunci.status_peminjaman === "menunggu validasi") {
+    await dataPinjamKunci.update({status_peminjaman: "sudah divalidasi"});
+    await dataDetailPinjamKunci.update({ status: "dipinjam" });
+    await Data_Pengembalian.create({
+      tanggal_pinjam: dataPinjamKunci.tanggal_pinjam,
+      tanggal_kembali: dataPinjamKunci.tanggal_kembali,
+      nama_pengembali: "",
+      status_pengembalian: "masih dipinjam",
+      DataPeminjamanId: dataPinjamKunci.id 
+    });
     if (req.user.RoleId === 7) {
       // create notification validasi kunci untuk penguna dari satpam
       await Notifications.create({
-        layananId: pinjam_kunci.id,
+        layananId: dataPinjamKunci.id,
         jenis_notif: "peminjaman kunci",
-        deskripsi_notif: `Permintaan peminjaman kunci ${kunci.nama_ruangan} telah divalidasi oleh satpam.`,
-        tujuan_notif: userPinjamKunci.id, //Id Peminjam kunci
+        deskripsi_notif: `Permintaan peminjaman kunci ${dataDetailPinjamKunci.Kunci.nama_ruangan} telah divalidasi oleh satpam.`,
+        tujuan_notif: dataPinjamKunci.User.id, //Id Peminjam kunci
         UserId: req.user.id,
       });
       req.flash("success", "Peminjaman kunci berhasil divalidasi");
@@ -196,48 +231,60 @@ exports.validasiPinjamKunci = async (req, res) => {
     } else if (req.user.RoleId === 2) {
       // create notification validasi kunci untuk penguna dari admin
       await Notifications.create({
-        layananId: pinjam_kunci.id,
+        layananId: dataPinjamKunci.id,
         jenis_notif: "peminjaman kunci",
-        deskripsi_notif: `Permintaan peminjaman kunci ${kunci.nama_ruangan} telah divalidasi oleh admin.`,
-        tujuan_notif: userPinjamKunci.id, //Rd Peminjam Kunci
+        deskripsi_notif: `Permintaan peminjaman kunci ${dataDetailPinjamKunci.Kunci.nama_ruangan} telah divalidasi oleh admin.`,
+        tujuan_notif: dataPinjamKunci.User.id, //Id Peminjam Kunci
         UserId: req.user.id,
       });
       req.flash("success", "Peminjaman kunci berhasil divalidasi");
       res.redirect("/admin/pinjam_kunci/validasi_pinjam_kunci");
     }
   } else {
-    res.status(200).send({
-      status: "Failed",
-      msg: 'Hanya bisa memvalidasi dengan status "menunggu validasi" ',
-    });
+    if(req.user.RoleId === 7) {
+      req.flash("failed", "Validasi peminjaman kunci gagal! Silahkan dicoba kembali.");
+      res.redirect("/satpam/pinjam_kunci/validasi_pinjam_kunci")
+    } else if (req.user.RoleId === 2) {
+      req.flash("failed", "Validasi peminjaman kunci gagal! Silahkan dicoba kembali.");
+      res.redirect("/admin/pinjam_kunci/validasi_pinjam_kunci")
+    }
   }
 };
 
 exports.tolakPinjamKunci = async (req, res) => {
-  const pinjam_kunci = await Peminjaman_Kunci.findOne({
-    where: { id: req.params.id },
+  const dataPinjamKunci = await Data_Peminjaman.findOne({
+    where: {id: req.params.id},
+    include: [{model: User}]
   });
-  const kunci = await Kunci.findOne({ where: { id: pinjam_kunci.KunciId } });
-  const userPinjamKunci = await User.findOne({
-    where: { id: pinjam_kunci.UserId },
+
+  const dataDetailPinjamKunci = await Detail_Peminjaman.findOne({
+    where: {
+      DataPeminjamanId: dataPinjamKunci.id
+    },
+    include: [
+      { model: Kunci }, 
+      { model: Data_Peminjaman, include: [{model: User}] }
+    ],
   });
-  if (!pinjam_kunci) {
-    return res.status(200).send({
-      msg: "peminjaman kunci yang dicari tidak ditemukan",
+
+
+  if (dataPinjamKunci.status_peminjaman === "menunggu validasi") {
+    await dataPinjamKunci.update({status_peminjaman: "dikembalikan"});
+    await dataDetailPinjamKunci.update({ status: "dikembalikan" });
+    await Data_Pengembalian.create({
+      tanggal_pinjam: dataPinjamKunci.tanggal_pinjam,
+      tanggal_kembali: dataPinjamKunci.tanggal_kembali,
+      nama_pengembali: "Peminjaman ditolak satpam",
+      status_pengembalian: "sudah kembali",
+      DataPeminjamanId: dataPinjamKunci.id 
     });
-  }
-  if (pinjam_kunci.status_peminjaman === "menunggu validasi") {
-    const update = await pinjam_kunci.update({
-      status_peminjaman: "dikembalikan",
-    });
-    await kunci.update({ status_kunci: "tersedia" });
     if (req.user.RoleId === 7) {
       // create notification tolak kunci untuk penguna dari satpam
       await Notifications.create({
-        layananId: pinjam_kunci.id,
+        layananId: dataPinjamKunci.id,
         jenis_notif: "peminjaman kunci",
-        deskripsi_notif: `Permintaan peminjaman kunci ${kunci.nama_ruangan} telah ditolak oleh satpam.`,
-        tujuan_notif: userPinjamKunci.id, //Id Peminjam kunci
+        deskripsi_notif: `Permintaan peminjaman kunci ${dataDetailPinjamKunci.Kunci.nama_ruangan} telah ditolak oleh satpam.`,
+        tujuan_notif: dataPinjamKunci.User.id, //Id Peminjam kunci
         UserId: req.user.id,
       });
       req.flash("failed", "Peminjaman kunci berhasil ditolak.");
@@ -245,59 +292,87 @@ exports.tolakPinjamKunci = async (req, res) => {
     } else if (req.user.RoleId === 2) {
       // create notification tolak kunci  untuk penguna dari admin
       await Notifications.create({
-        layananId: pinjam_kunci.id,
+        layananId: dataPinjamKunci.id,
         jenis_notif: "peminjaman kunci",
-        deskripsi_notif: `Permintaan peminjaman kunci ${kunci.nama_ruangan} telah ditolak oleh admin.`,
-        tujuan_notif: userPinjamKunci.id, //Id peminmjam kunci
+        deskripsi_notif: `Permintaan peminjaman kunci ${dataDetailPinjamKunci.kunci.nama_ruangan} telah ditolak oleh admin.`,
+        tujuan_notif: dataPinjamKunci.User.id, //Id peminmjam kunci
         UserId: req.user.id,
       });
       req.flash("failed", "Peminjaman kunci berhasil ditolak.");
       res.redirect("/admin/pinjam_kunci/validasi_pinjam_kunci");
     }
   } else {
-    res.status(200).send({
-      status: "Failed",
-      msg: 'Hanya bisa memvalidasi dengan status "menunggu validasi" ',
-    });
+    if(req.user.RoleId === 7) {
+      req.flash("failed", "Penolakan peminjaman kunci gagal! Silahkan dicoba kembali.");
+      res.redirect("/satpam/pinjam_kunci/validasi_pinjam_kunci")
+    } else if (req.user.RoleId === 2) {
+      req.flash("failed", "Penolakan peminjaman kunci gagal! Silahkan dicoba kembali.");
+      res.redirect("/admin/pinjam_kunci/validasi_pinjam_kunci")
+    }
   }
 };
 
 exports.validasiKembaliKunci = async (req, res) => {
-  const pinjam_kunci = await Peminjaman_Kunci.findOne({
-    where: { id: req.params.id },
+  const dataPinjamKunci = await Data_Peminjaman.findOne({
+    where: {id: req.body.id_peminjaman},
+    include: [{model: User}]
   });
-  const kunci = await Kunci.findOne({ where: { id: pinjam_kunci.KunciId } });
-  const userPinjamKunci = await User.findOne({
-    where: { id: pinjam_kunci.UserId },
+
+  const dataDetailPinjamKunci = await Detail_Peminjaman.findOne({
+    where: {
+      DataPeminjamanId: dataPinjamKunci.id
+    },
+    include: [
+      { model: Kunci }, 
+      { model: Data_Peminjaman, include: [{model: User}] }
+    ],
   });
-  if (!pinjam_kunci) {
-    return res.status(200).send({
-      msg: "peminjaman kunci yang dicari tidak ditemukan",
+
+  const dataKembaliKunci = await Data_Pengembalian.findOne({
+    where: {
+      DataPeminjamanId: dataPinjamKunci.id
+    }
+  });
+
+  const {tanggal_kembali, nama_pengembali} = req.body;
+  if (dataDetailPinjamKunci.status === "dipinjam") {
+    await dataPinjamKunci.update({ status_peminjaman: "dikembalikan" });
+    await dataDetailPinjamKunci.update({ status: "dikembalikan" });
+    await dataKembaliKunci.update({
+      tanggal_kembali: tanggal_kembali,
+      nama_pengembali: nama_pengembali,
+      status_pengembalian: "sudah dikembalikan", 
     });
-  }
-  await kunci.update({ status_kunci: "tersedia" });
-  await pinjam_kunci.update({ status_peminjaman: "dikembalikan" });
-  if (req.user.RoleId === 7) {
-    // create notification tolak kunci  untuk penguna dari admin
-    await Notifications.create({
-      layananId: pinjam_kunci.id,
-      jenis_notif: "peminjaman kunci",
-      deskripsi_notif: `Pengembalian kunci ${kunci.nama_ruangan} telah divalidasi oleh admin.`,
-      tujuan_notif: userPinjamKunci.id, //Id Peminjam Kunci
-      UserId: req.user.id,
-    });
-    req.flash("success", "Pengembalian kunci berhasil divalidasi");
-    res.redirect("/satpam/pinjam_kunci/validasi_kembali_kunci");
-  } else if (req.user.RoleId === 2) {
-    // create notification tolak kunci  untuk penguna dari admin
-    await Notifications.create({
-      layananId: pinjam_kunci.id,
-      jenis_notif: "peminjaman kunci",
-      deskripsi_notif: `Pengembalian kunci ${kunci.nama_ruangan} telah divalidasi oleh admin.`,
-      tujuan_notif: userPinjamKunci.id, //Id Peminjam Kunci
-      UserId: req.user.id,
-    });
-    req.flash("success", "Pengembalian kunci berhasil divalidasi");
-    res.redirect("/admin/pinjam_kunci/validasi_kembali_kunci");
+    if (req.user.RoleId === 7) {
+      // create notification tolak kunci  untuk penguna dari admin
+      await Notifications.create({
+        layananId: dataPinjamKunci.id,
+        jenis_notif: "peminjaman kunci",
+        deskripsi_notif: `Pengembalian kunci ${dataDetailPinjamKunci.Kunci.nama_ruangan} telah divalidasi oleh admin.`,
+        tujuan_notif: dataPinjamKunci.User.id, //Id Peminjam Kunci
+        UserId: req.user.id,
+      });
+      req.flash("success", "Pengembalian kunci berhasil divalidasi");
+      res.redirect("/satpam/pinjam_kunci/validasi_kembali_kunci");
+    } else if (req.user.RoleId === 2) {
+      // create notification tolak kunci  untuk penguna dari admin
+      await Notifications.create({
+        layananId: dataPinjamKunci.id,
+        jenis_notif: "peminjaman kunci",
+        deskripsi_notif: `Pengembalian kunci ${dataDetailPinjamKunci.Kunci.nama_ruangan} telah divalidasi oleh admin.`,
+        tujuan_notif: dataPinjamKunci.User.id, //Id Peminjam Kunci
+        UserId: req.user.id,
+      });
+      req.flash("success", "Pengembalian kunci berhasil divalidasi");
+      res.redirect("/admin/pinjam_kunci/validasi_kembali_kunci");
+    }
+  } else {
+    if(req.user.RoleId === 7) {
+      req.flash("failed", "Validasi pengembalian kunci gagal! Silahkan dicoba kembali.");
+      res.redirect("/satpam/pinjam_kunci/validasi_kembali_kunci")
+    } else if (req.user.RoleId === 2) {
+      req.flash("failed", "Validasi pengembalian kunci gagal! Silahkan dicoba kembali.");
+      res.redirect("/admin/pinjam_kunci/validasi_kembali_kunci")
+    }
   }
 };

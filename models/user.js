@@ -41,10 +41,29 @@ module.exports = (sequelize, DataTypes) => {
     foto_user: {
       type: DataTypes.STRING,
       defaultValue: "",
+      // get() {
+      //   const foto_user = this.getDataValue('foto_user');
+      //   return uploadDir + foto_user
+      // }
+    },
+    foto_ktp: {
+      type: DataTypes.STRING,
+      defaultValue: "",
       get() {
-        const foto_user = this.getDataValue('foto_user');
-        return uploadDir + foto_user
+        const foto_ktp = this.getDataValue('foto_ktp');
+        return uploadDir + foto_ktp
       }
+    },
+    isValid: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "belum divalidasi",
+      validate: {
+        isIn: {
+          args: [["belum divalidasi", "sudah divalidasi", "dibuat oleh admin"]],
+          msg: "status aduan hanya tersedia 3 pilihan: belum divalidasi, sudah divalidasi atau dibuat oleh admin",
+        },
+      },
     }
   }, {
     hooks: {
@@ -60,8 +79,8 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = function (models) {
     // associations can be defined here
     // User.hasMany(models.Komentar);
+    // User.hasMany(models.Peminjaman_Kunci)
     User.hasMany(models.Aduan_Lapor);
-    User.hasMany(models.Peminjaman_Kunci)
     User.hasMany(models.Aduan_Hilang);
     User.hasMany(models.Notifications)
     User.belongsTo(models.Role);

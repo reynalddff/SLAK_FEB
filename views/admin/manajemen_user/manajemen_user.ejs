@@ -29,7 +29,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover" id="table-user">
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
@@ -38,6 +38,7 @@
                                         <th scope="col">Email</th>
                                         <th scope="col">No Handphone</th>
                                         <th scope="col">Kategori User</th>
+                                        <th scope="col">Validasi</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -50,15 +51,34 @@
                                         <td><%= user.email %></td>
                                         <td><%= user.telp_user %></td>
                                         <td class="text-capitalize"><%= user.Role.role %></td>
+                                        <% if(user.isValid === "belum divalidasi") { %>
+                                        <td>
+                                            <button class="btn btn-success btn-action validasi-pengguna"
+                                                data-toggle="modal" data-target="#modalValidasi"
+                                                data-id="<%= user.id %>" data-nama_user="<%= user.nama_user %>"
+                                                data-username="<%= user.username %>" data-email="<%= user.email %>"
+                                                data-telp_user="<%= user.telp_user %>"
+                                                data-foto_ktp="<%= user.foto_ktp %>">
+                                                Validasi User
+                                            </button>
+                                        </td>
+                                        <% } else { %>
+                                        <td>
+                                            <button class="btn btn-success btn-action disabled"
+                                                onclick="validasi_pengguna('<%= user.id %>')" data-id="<%= user.id %>">
+                                                User telah divalidasi
+                                            </button>
+                                        </td>
+                                        <% } %>
                                         <td>
                                             <a class="btn btn-primary btn-action"
                                                 href="/admin/manajemen_user/edit/<%= user.id %>" title="Edit"><i
                                                     class="fas fa-pencil-alt"></i>
                                             </a>
-                                            <button class="btn btn-danger btn-action delete-btn"
-                                                data-id="<%= user.id %>"><i class="fas fa-trash"></i>
+                                            <button class="btn btn-danger btn-action"
+                                                onclick="delete_pengguna('<%=user.id%>')" data-id="<%= user.id %>"><i
+                                                    class="fas fa-trash"></i>
                                             </button>
-
                                             <!-- kalo make sweetalert -->
                                             <!-- <button class="btn btn-danger btn-action delete-btn"
                                                 onclick="delete_user(`<%= user.id %>`)"><i class="fas fa-trash"></i>
@@ -76,26 +96,99 @@
     </section>
 </div>
 
+<div class="modal fade" id="modalValidasi" tabindex="-1" aria-labelledby="modalValidasiLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Validas Pengguna</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="/admin/manajemen_user/valdasi_user">
+                    <input type="hidden" class="user_id" name="user_id" readonly>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Nama Pengguna:</label>
+                        <input type="text" class="form-control" id="nama_pengguna" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Username:</label>
+                        <input type="text" class="form-control" id="username" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Email:</label>
+                        <input type="text" class="form-control" id="email" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">No Telepon:</label>
+                        <input type="text" class="form-control" id="telp_user" readonly>
+                    </div>
+                    <div class="form-group">
+                        <img id="foto_ktp" class="img-fluid" alt="Foto Ktp">
+                    </div>
+                    <div class="form-group" style="float:right;">
+                        <button type="submit" class="btn btn-success">Validasi User</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
 <%- include ../../partials/footer.ejs %>
 <script>
-    $('.delete-btn').click(function (event) {
-        event.preventDefault();
-        const id = $(this).attr('data-id');
-        if (confirm(`Are you sure want to delete this user?`)) {
-            // alert(id)
-            $.ajax({
-                url: '/admin/manajemen_user/delete/' + id,
-                method: 'DELETE',
-                data: { id },
-            }).done(function (res) {
-                if (res.success) {
-                    console.log(`Success! User has been removed`);
-                    window.location.reload();
-                } else {
-                    alert('something error please try again!')
-                }
-            });
-        };
+
+    function delete_pengguna(id) {
+        let idUser = id;
+        swal({
+            title: "Yakin ingin menghapus user / pengguna ini?",
+            text: "Data pengguna yang dihapus tidak dapat kembali",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+        }).then((willDelete) => {
+            if (willDelete) {
+                swal({
+                    title: 'Informasi',
+                    text: "Success hapus pengguna",
+                    position: 'top-left',
+                    icon: 'success',
+                    buttons: false,
+                    timer: 2000
+                }).then(() => {
+                    window.location.assign(`/admin/manajemen_user/delete/${idUser}/`);
+                })
+            }
+        })
+    }
+
+    function validasi_pengguna(id) {
+
+    }
+
+    $(document).ready(function () {
+        $('#table-user').on('click', '.validasi-pengguna', function () {
+            const id = $(this).data('id');
+            const nama_user = $(this).data('nama_user');
+            const username = $(this).data('username');
+            const email = $(this).data("email");
+            const telp_user = $(this).data("telp_user");
+            const foto_ktp = $(this).data("foto_ktp")
+
+            $('#komentarModal').modal('show');
+            $('.user_id').val(id);
+            $('#nama_pengguna').val(nama_user);
+            $('#username').val(username);
+            $('#email').val(email);
+            $('#telp_user').val(telp_user);
+            $('#foto_ktp').attr('src', foto_ktp);
+        });
     });
+
+    $("#table-user").DataTable({});
 
 </script>

@@ -17,7 +17,10 @@
     <link rel="stylesheet" href="/modules/owlcarousel2/dist/assets/owl.theme.default.min.css">
     <link rel="stylesheet" href="/modules/chocolat/dist/css/chocolat.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
+    <link rel="stylesheet" href="/modules/datatables/datatables.css">
 
     <!-- Template CSS -->
     <link rel="stylesheet" href="/stylesheets/style.css">
@@ -98,8 +101,13 @@
                     </li>
                     <li class="dropdown"><a href="#" data-toggle="dropdown"
                             class="nav-link dropdown-toggle nav-link-lg nav-link-user">
-                            <img alt="image" src="<%= foto_user %>" class="rounded-circle mr-1"
+                            <% if (!foto_user){ %>
+                            <img alt="image" src="./../images/avatar/avatar-1.png" class="rounded-circle mr-1"
                                 style="width: 2em; height: 2em;">
+                            <% } else { %>
+                            <img alt="image" src="./../images/<%= foto_user %>" class="rounded-circle mr-1"
+                                style="width: 2em; height: 2em;">
+                            <% } %>
                             <div class="d-sm-none d-lg-inline-block">Hi, <%= nama_user %></div>
                         </a>
                         <div class=" dropdown-menu dropdown-menu-right">

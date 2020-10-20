@@ -65,27 +65,37 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% peminjaman_kunci.forEach((pinjam, index) => { %>
+                                    <% detail_peminjaman.forEach((pinjam, index) => { %>
                                     <tr>
                                         <th scope="row"><%= index + 1 %></th>
-                                        <td><%= pinjam.User.nama_user %></td>
-                                        <td><%= pinjam.User.telp_user %></td>
+                                        <td><%= pinjam.Data_Peminjaman.User.nama_user %></td>
+                                        <td><%= pinjam.Data_Peminjaman.User.telp_user %></td>
                                         <td><%= pinjam.Kunci.nama_ruangan %></td>
-                                        <td><%= pinjam.tanggal_pinjam %></td>
+                                        <td><%= pinjam.Data_Peminjaman.tanggal_pinjam %></td>
+                                        <% if (pinjam.status === "dipinjam") { %>
+                                        <td>
+                                            <span class="badge badge-warning">Sedang dipinjam</span>
+                                        </td>
+                                        <% } else if (pinjam.status === "dikembalikan") { %>
+                                        <td>
+                                            <span class="badge badge-secondary">Sudah dikembalikan</span>
+                                        </td>  
+                                        <% } else { %>
                                         <td>
                                             <a class="btn btn-success btn-action" data-toggle="tooltip" title="Validasi"
-                                                onclick="validasi_kunci('<%= pinjam.id %>')">Validasi
+                                                onclick="validasi_kunci('<%= pinjam.Data_Peminjaman.id %>')">Validasi
                                             </a>
                                             <a class="btn btn-danger btn-action" data-toggle="tooltip" title="Tolak"
-                                                onclick="tolak_kunci('<%= pinjam.id %>')">Tolak
+                                                onclick="tolak_kunci('<%= pinjam.Data_Peminjaman.id %>')">Tolak
                                             </a>
                                         </td>
+                                        <% } %>
                                         <td>
-                                            <a href="#QRCodeGenerator" data-toggle="modal" data-id="<%= pinjam.id %>"
-                                                data-tanggal_pinjam="<%= pinjam.tanggal_pinjam %>"
-                                                data-tanggal_kembali="<%= pinjam.tanggal_kembali %>"
-                                                data-nama_user="<%= pinjam.User.nama_user %>"
-                                                data-telp_user="<%= pinjam.User.telp_user %>"
+                                            <a href="#QRCodeGenerator" data-toggle="modal" data-id="<%= pinjam.Data_Peminjaman.id %>"
+                                                data-tanggal_pinjam="<%= pinjam.Data_Peminjaman.tanggal_pinjam %>"
+                                                data-tanggal_kembali="<%= pinjam.Data_Peminjaman.tanggal_kembali %>"
+                                                data-nama_user="<%= pinjam.Data_Peminjaman.User.nama_user.nama_user %>"
+                                                data-telp_user="<%= pinjam.Data_Peminjaman.User.nama_user.telp_user %>"
                                                 data_kunci="<%= pinjam.Kunci.nama_ruangan %>"
                                                 data-target="#QRCodeGenerator" id="qrcode-pinjam-kunci"
                                                 class="btn btn-dark">
@@ -193,5 +203,7 @@
 
             qrcode.makeCode(`nama peminjam: ${nama_user} & no teleponnya: ${telp_user} pada tanggal: ${tanggal_pinjam} `);
         });
+
+        $("#pinjam-kunci").DataTable({});
     });
 </script>

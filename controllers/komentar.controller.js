@@ -78,6 +78,7 @@ exports.getDeskripsiKomentar = async (req, res) => {
   });
 
   res.render("karyawan/aduan_lapor/aduan_lapor_komentar", {
+    user: req.user,
     aduan,
     notifications,
     nama_user: req.user.nama_user,

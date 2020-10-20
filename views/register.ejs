@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+    <title>Register &mdash; Stisla</title>
+
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="modules/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="modules/fontawesome/css/all.min.css">
+
+    <!-- CSS Libraries -->
+    <link rel="stylesheet" href="modules/bootstrap-social/bootstrap-social.css">
+
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <link rel="stylesheet" href="stylesheets/components.css">
+    <!-- Start GA -->
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-94034622-3"></script> -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-94034622-3');
+    </script>
+    <!-- /END GA -->
+</head>
+
+<body>
+    <div id="app">
+        <section class="section">
+            <div class="container mt-5">
+                <div class="row">
+                    <div
+                        class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-8 offset-lg-2 col-xl-8 offset-xl-2">
+                        <div class="login-brand">
+                            <img src="/images/logo-ub.png" alt="logo" width="100"
+                                class="shadow-light rounded-circle">
+                        </div>
+                        <% if (error.length > 0) { %>
+                        <div class="alert alert-danger  lert-dismissible show fade">
+                            <div class="alert-body">
+                                <button class="close" data-dismiss="alert">
+                                    <span>×</span>
+                                </button>
+                                <div class="alert-title">Error</div>
+                                <%= error %>
+                            </div>
+                        </div>
+                        <% } %>
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h4 style="margin: 0 auto;">Registrasi Akun Baru Sebagai Pegawai / Karyawan</h4>
+                            </div>
+
+                            <div class="card-body">
+                                <form method="POST" action="/register" enctype="multipart/form-data">
+                                    <div class="form-group">
+                                        <label for="nama_user">Nama Panjang</label>
+                                        <input id="nama_user" type="text" class="form-control" name="nama_user"
+                                            autofocus required>
+                                        <small>Sesuai dengan Kartu Identitas</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input id="email" type="email" class="form-control" name="email" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="username">Nomor Telepon</label>
+                                        <input id="username" type="number" class="form-control" name="telp_user"
+                                            required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="frist_name">Nomor Induk Pegawai / Karyawan</label>
+                                        <input id="frist_name" type="number" class="form-control" name="username"
+                                            required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="password" class="d-block">Password</label>
+                                        <input id="password" type="password" class="form-control pwstrength"
+                                            data-indicator="pwindicator" name="password" required>
+                                        <div id="pwindicator" class="pwindicator">
+                                            <div class="bar"></div>
+                                            <div class="label"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="exampleFormControlFile1">Input Foto KTP</label>
+                                        <input type="file" name="foto_ktp" class="form-control-file"
+                                            id="exampleFormControlFile1" accept='image/*' required />
+                                        <small>Foto harus memiliki format JPG/PNG/JPEG dan maksimal ukuran
+                                            10 MB</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                                            Register
+                                        </button>
+                                    </div>
+                                    <div class="form-group">
+                                        <a href="/login" class="btn btn-warning btn-lg btn-block">
+                                            Kembali Ke Halaman Login
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="simple-footer">
+                            Copyright &copy; Stisla 2018
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- General JS Scripts -->
+    <script src="/modules/jquery.min.js"></script>
+    <script src="/modules/popper.js"></script>
+    <script src="/modules/tooltip.js"></script>
+    <script src="/modules/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/modules/nicescroll/jquery.nicescroll.min.js"></script>
+    <script src="/modules/moment.min.js"></script>
+    <script src="/javascripts/stisla.js"></script>
+
+    <!-- JS Libraies -->
+
+    <!-- Page Specific JS File -->
+
+    <!-- Template JS File -->
+    <script src="/javascripts/scripts.js"></script>
+    <script src="/javascripts/custom.js"></script>
+</body>
+
+</html>

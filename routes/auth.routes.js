@@ -1,3 +1,6 @@
+const { upload } = require("./../config/multer");
+const { User, Role } = require('./../models');
+require('express-async-errors');
 module.exports = (app, passport) => {
 
     app.get('/', redirectByRole, (req, res) => {
@@ -7,10 +10,10 @@ module.exports = (app, passport) => {
     });
 
     app.get('/login', redirectByRole, (req, res) => {
-        res.render('auth-login', { message: req.flash('error_msg') })
+        res.render('auth-login', { message: req.flash('error_msg'), success: req.flash('success'), })
     });
 
-    app.post('/actionLogin',
+    app.post('/login',
         passport.authenticate('local-signin', { failureRedirect: '/login', failureFlash: 'invalid username or pasword' }),
         (req, res, next) => {
             if (req.user.RoleId === 1) {
@@ -36,6 +39,37 @@ module.exports = (app, passport) => {
             res.redirect('/login');
         });
     });
+
+    app.get('/register', (req, res) => {
+        res.render('register', {
+            success: req.flash('success'),
+            error: req.flash('error')
+        })
+    });
+
+    app.post('/register', upload.single('foto_ktp'), async (req, res) => {
+        const { nama_user, email, telp_user, username, password } = req.body;
+        await User.create({
+            nama_user,
+            email,
+            telp_user,
+            username,
+            password,
+            foto_ktp: req.file === undefined ? '' : req.file.filename,
+            foto_user: "",
+            isValid: "belum divalidasi",
+            RoleId: 1
+        });
+
+        if (!req.body) {
+            req.flash('error', 'Harap mengisi form yang tersedia');
+            res.redirect('/register');
+            return;
+        }
+
+        req.flash('success', 'Registrasi berhasil! Silahkan menunggu 1 x 24 jam untuk validasi akun anda. Informasi lebih lanjut silahkan datang ke kantor PSIK FEB UB. Terimakasih');
+        res.redirect('/login')
+    })
 
     function isLoggedIn(req, res, next) {
         // console.log(req.isAuthenticated())

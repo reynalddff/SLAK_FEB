@@ -1,5 +1,7 @@
 const { User, Aduan_Lapor, Komentar, Notifications } = require("./../models");
+const excel = require("exceljs");
 const Op = require("sequelize").Op;
+const db = require("../models");
 
 require("express-async-errors");
 
@@ -22,6 +24,7 @@ exports.getAllAduan = async (req, res) => {
       notifications,
       nama_user: req.user.nama_user,
       success: req.flash("success"),
+      failed: req.flash("failed"),
       foto_user: req.user.foto_user,
     });
   } else if (req.user.RoleId === 1) {
@@ -43,8 +46,10 @@ exports.getAllAduan = async (req, res) => {
     res.render("karyawan/aduan_lapor/aduan_lapor", {
       aduans,
       notifications,
+      user: req.user,
       nama_user: req.user.nama_user,
       success: req.flash("success"),
+      failed: req.flash("failed"),
       foto_user: req.user.foto_user,
     });
   }
@@ -54,14 +59,14 @@ exports.createAduan = async (req, res) => {
   if (req.body.judul_aduan && req.body.deskripsi_aduan) {
     // check file upload
     if (req.fileValidationError) {
-      req.flash("error", "Foto harus memiliki format JPG/JPEG/PNG");
+      req.flash("failed", "Foto harus memiliki format JPG/JPEG/PNG");
       res.redirect("/karyawan/aduan_lapor");
     }
 
     //create aduan
     const aduan = await Aduan_Lapor.create({
       judul_aduan: req.body.judul_aduan,
-      lokasi_aduan: req.body.lokasi_aduan,
+      lokasi_aduan: req.body.lokasi_aduan || "-",
       deskripsi_aduan: req.body.deskripsi_aduan,
       tujuan_aduan: req.body.tujuan_aduan,
       latitude: req.body.lat,
@@ -91,7 +96,7 @@ exports.createAduan = async (req, res) => {
     req.flash("success", "Aduan berhasil ditambahkan");
     res.redirect("/karyawan/aduan_lapor");
   } else {
-    req.flash("error", "Input field judul dan deskripsi aduan harus terisi");
+    req.flash("failed", "Input field judul dan deskripsi aduan harus terisi");
     res.redirect("/karyawan/aduan_lapor");
   }
 };
@@ -127,6 +132,7 @@ exports.getContactProfile = async (req, res) => {
     },
   });
   res.render("karyawan/aduan_lapor/aduan_lapor_konfirmasi_contact", {
+    user: req.user,
     user,
     notifications,
     nama_user: req.user.nama_user,
@@ -255,22 +261,129 @@ exports.tanggapAduan = async (req, res) => {
   }
 };
 
-// get aduan by month
-exports.getAduanByMonth = async (req, res) => {
-  const aduan = await Aduan_Lapor.findAll({
-    attributes: [
-      [sequelize.fn("date_trunc", "month", sequelize.col("createdAt")), "date"],
-      [sequelize.fn("count", "*"), "count"],
-    ],
-    group: [sequelize.col("date")],
-    // where: {
-    //     tujuan_aduan: 3
-    // }
-  });
+// download and export data ke excel
+exports.downloadAduanLapor = async (req, res) => {
+  let allAduan = [];
+  let aduans = [];
+  const tahun = req.query.tahun;
+  const bulan = req.query.bulan;
 
-  const dataByMonth = {
-    july: aduan[0],
-  };
+  if (!tahun && !bulan) {
+    aduans = await Aduan_Lapor.findAll({
+      include: [{ model: User }],
+    });
+    aduans.forEach((aduan) => {
+      const {
+        id,
+        judul_aduan,
+        deskripsi_aduan,
+        lokasi_aduan,
+        tujuan_aduan,
+        status_aduan,
+        kategori_aduan,
+        createdAt,
+      } = aduan;
+      allAduan.push({
+        id,
+        nama_user: aduan.User.nama_user,
+        judul_aduan,
+        deskripsi_aduan,
+        lokasi_aduan,
+        tujuan_aduan,
+        status_aduan,
+        kategori_aduan,
+        createdAt,
+      });
+    });
+  } else if (tahun) {
+    if (tahun === "semua") {
+      aduans = await Aduan_Lapor.findAll({
+        include: [{ model: User }],
+      });
+      aduans.forEach((aduan) => {
+        const {
+          id,
+          judul_aduan,
+          deskripsi_aduan,
+          lokasi_aduan,
+          tujuan_aduan,
+          status_aduan,
+          kategori_aduan,
+          createdAt,
+        } = aduan;
+        allAduan.push({
+          id,
+          nama_user: aduan.User.nama_user,
+          judul_aduan,
+          deskripsi_aduan,
+          lokasi_aduan,
+          tujuan_aduan,
+          status_aduan,
+          kategori_aduan,
+          createdAt,
+        });
+      });
+    } else {
+      aduans = await db.sequelize.query(
+        // `SELECT DATE_TRUNC('month', "Aduan_Lapor"."createdAt") AS "Bulan", COUNT ("Aduan_Lapor"."id") AS "Total Aduan" FROM "Aduan_Lapors" AS "Aduan_Lapor" GROUP BY DATE_TRUNC('month', "createdAt")`,
+        `SELECT "Aduan_Lapor"."id", "Aduan_Lapor"."judul_aduan", "Aduan_Lapor"."deskripsi_aduan", "Aduan_Lapor"."lokasi_aduan", "Aduan_Lapor"."tujuan_aduan", "Aduan_Lapor"."status_aduan", "Aduan_Lapor"."kategori_aduan", "Aduan_Lapor"."createdAt", 
+        "User"."nama_user" FROM "Aduan_Lapors" AS "Aduan_Lapor" LEFT OUTER JOIN "Users" AS "User" ON "Aduan_Lapor"."UserId" = "User"."id" WHERE date_trunc('month', "Aduan_Lapor"."createdAt")::date = '${tahun}-${bulan}-01'::date`,
+        {
+          replacements: ["active"],
+          type: db.sequelize.QueryTypes,
+        }
+      );
+      aduans.forEach((aduan) => {
+        const {
+          id,
+          judul_aduan,
+          nama_user,
+          deskripsi_aduan,
+          lokasi_aduan,
+          tujuan_aduan,
+          status_aduan,
+          kategori_aduan,
+          createdAt,
+        } = aduan;
+        allAduan.push({
+          id,
+          nama_user,
+          judul_aduan,
+          deskripsi_aduan,
+          lokasi_aduan,
+          tujuan_aduan,
+          status_aduan,
+          kategori_aduan,
+          createdAt,
+        });
+      });
+    }
+  }
+  let workbook = new excel.Workbook();
+  let worksheet = workbook.addWorksheet("Aduan");
 
-  res.send({ dataByMonth });
+  worksheet.columns = [
+    { header: "Id Aduan", key: "id", width: 20 },
+    { header: "Nama Pelapor", key: "nama_user", width: 20 },
+    { header: "Judul Aduan", key: "judul_aduan", width: 20 },
+    { header: "Deskripsi Aduan", key: "deskripsi_aduan", width: 20 },
+    { header: "Lokasi Aduan", key: "lokasi_aduan", width: 20 },
+    { header: "Tujuan Aduan", key: "tujuan_aduan", width: 20 },
+    { header: "Status Aduan", key: "status_aduan", width: 20 },
+    { header: "Kategori Aduan", key: "kategori_aduan", width: 20 },
+    { header: "Tanggal Aduan Diajukan", key: "createdAt", width: 20 },
+  ];
+  worksheet.addRows(allAduan);
+  res.setHeader(
+    "Content-Type",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  );
+
+  res.setHeader(
+    "Content-Disposition",
+    "attachment; filename=" + "Laporan Aduan Lapor.xlsx"
+  );
+
+  const dataExport = await workbook.xlsx.write(res);
+  return res.status(200).end();
 };

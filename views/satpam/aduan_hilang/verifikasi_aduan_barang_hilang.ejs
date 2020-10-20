@@ -105,17 +105,19 @@
                                         <td class="text-primary font-weight-bold text-capitalize">
                                             <%= aduan.status_aduan %>
                                         </td>
-                                        <td><a href="pengajuan_aduan_komentar.html"
-                                                class="btn btn-secondary disabled">Verifikasi
-                                                Aduan</a>
+                                        <td><button class="btn btn-secondary disabled">Verifikasi
+                                                Aduan</button>
                                         </td>
-                                        <td><button onclick="tolak_aduan('<%= aduan.id %>')"
-                                                class="btn btn-secondary disabled">Tolak
+                                        <td><button class="btn btn-secondary disabled">Tolak
                                                 Aduan
                                             </button>
                                         </td>
-                                        <td><a class="btn btn-dark btn-action" data-toggle="tooltip"
-                                                title="Print Aduan"><i class="fas fa-print"></i></a>
+                                        <td><a href="/satpam/aduan_hilang/print/<%=aduan.id %>"
+                                                class="btn btn-dark btn-action" data-toggle="tooltip"
+                                                title="Print Aduan" target="popup"
+                                                onclick="window.open('/satpam/aduan_hilang/print/<%=aduan.id %>', 'name', 'width=600, height=400')">
+                                                <i class="fas fa-print"></i>
+                                            </a>
                                         </td>
                                         <% } %>
                                     </tr>
@@ -168,6 +170,9 @@
                         <input class="form-control lokasi_aduan" rows="1" name="lokasi_aduan" name="tanggapan_aduan"
                             disabled>
                     </div>
+                    <div class="form-group">
+                        <img id="" class="img-fluid foto_barang" alt="Foto Barang">
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -190,7 +195,6 @@
             const telp = $(this).data('telp');
             const email = $(this).data('email');
             const image = $(this).data('image');
-
             $('#komentarModal').modal('show');
             $('.id').val(id);
             $('.judul_aduan').val(aduan);
@@ -199,7 +203,8 @@
             $('.nama_user').val(nama);
             $('.telp_user').val(telp);
             $('.email_user').val(email);
-            $('.foto_barang').val(image)
+            $('.foto_barang').attr("src", image)
         });
+        $("#aduan-hilang").DataTable({})
     });
 </script>

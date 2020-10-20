@@ -52,32 +52,32 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% peminjaman_kunci.forEach((pinjam, index) => { %>
+                                    <% detail_peminjaman.forEach((pinjam, index) => { %>
                                     <tr>
                                         <th scope="row"><%= index + 1 %></th>
-                                        <td><%= pinjam.User.nama_user %></td>
-                                        <td><%= pinjam.User.telp_user %></td>
+                                        <td><%= pinjam.Data_Peminjaman.User.nama_user %></td>
+                                        <td><%= pinjam.Data_Peminjaman.User.telp_user %></td>
                                         <td><%= pinjam.Kunci.nama_ruangan %></td>
-                                        <td><%= pinjam.tanggal_pinjam %></td>
-                                        <% if (pinjam.status_peminjaman === 'dipinjam') { %>
+                                        <td><%= pinjam.Data_Peminjaman.tanggal_pinjam %></td>
+                                        <% if (pinjam.status === 'dipinjam') { %>
                                         <td>
                                             <a class="btn btn-success btn-action" data-toggle="tooltip" title="Validasi"
-                                                onclick="validasi_kunci('<%= pinjam.id %>')">Validasi Pengembalian
+                                                onclick="validasi_kunci('<%= pinjam.Data_Peminjaman.id %>')">Validasi Pengembalian
                                             </a>
                                         </td>
                                         <% } else { %>
                                         <td>
-                                            <a href="pengajuan_aduan_komentar.html" class="btn btn-secondary disabled"
+                                            <a href="#" class="btn btn-secondary disabled"
                                                 disabled>Validasi
                                                 Pengembalian</a>
                                         </td>
                                         <% } %>
                                         <td>
-                                            <a href="#QRCodeGenerator" data-toggle="modal" data-id="<%= pinjam.id %>"
-                                                data-tanggal_pinjam="<%= pinjam.tanggal_pinjam %>"
-                                                data-tanggal_kembali="<%= pinjam.tanggal_kembali %>"
-                                                data-nama_user="<%= pinjam.User.nama_user %>"
-                                                data-telp_user="<%= pinjam.User.telp_user %>"
+                                            <a href="#QRCodeGenerator" data-toggle="modal" data-id="<%= pinjam.Data_Peminjaman.id %>"
+                                                data-tanggal_pinjam="<%= pinjam.Data_Peminjaman.tanggal_pinjam %>"
+                                                data-tanggal_kembali="<%= pinjam.Data_Peminjaman.tanggal_kembali %>"
+                                                data-nama_user="<%= pinjam.Data_Peminjaman.User.nama_user %>"
+                                                data-telp_user="<%= pinjam.Data_Peminjaman.User.telp_user %>"
                                                 data_kunci="<%= pinjam.Kunci.nama_ruangan %>"
                                                 data-target="#QRCodeGenerator" id="qrcode-pinjam-kunci"
                                                 class="btn btn-dark">
@@ -163,5 +163,7 @@
 
             qrcode.makeCode(`nama peminjam: ${nama_user} & no teleponnya: ${telp_user} pada tanggal: ${tanggal_pinjam} `);
         });
+
+        $("#pinjam-kunci").DataTable({});
     });
 </script>

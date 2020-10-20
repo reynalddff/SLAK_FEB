@@ -9,136 +9,142 @@
         </div>
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12">
-                <div class="col-lg-12 col-md-12 col-sm-12">
-                    <div class="card card-statistic-1">
-                        <div class="card-icon bg-primary">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card-header">
-                                <h4>Total Pengguna Aktif</h4>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="card card-statistic-1">
+                            <div class="card-icon bg-primary">
+                                <i class="fas fa-users"></i>
                             </div>
-                            <div class="card-body">
-                                <%= user %>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Total Pengguna Aktif</h4>
+                                </div>
+                                <div class="card-body">
+                                    <%= user %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="card card-statistic-1">
+                            <div class="card-icon bg-warning">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Total Pengguna Yang Harus Divalidasi</h4>
+                                </div>
+                                <div class="card-body">
+                                    <%= user %>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-12 col-md-12 col-sm-12">
-                    <input type="hidden" id="RoleId" value="<%=RoleId %>">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Statistics Survey</h4>
-                        </div>
-                        <div class="card-body">
-                            <div style="width: 45em;">
-                                <canvas id="chartAduan"></canvas>
-                            </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Cari Data</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="find-data">
+                            <form action="/admin" method="get" id="find-data">
+                                <input type="text" id="total_aduan_lapor" value="<%= aduan_lapor.total %>" hidden>
+                                <input type="text" id="aduan_lapor_belum" value="<%= aduan_lapor.belum %>" hidden>
+                                <input type="text" id="aduan_lapor_sudah" value="<%= aduan_lapor.sudah %>" hidden>
+                                <input type="text" id="total_aduan_hilang" value="<%= aduan_hilang.total %>" hidden>
+                                <input type="text" id="aduan_hilang_belum" value="<%= aduan_hilang.belum %>" hidden>
+                                <input type="text" id="aduan_hilang_sudah" value="<%= aduan_hilang.sudah %>" hidden>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <select class="form-control text-capitalize" name="tahun" id="tahun">
+                                                <option value="semua" class="text-capitalize">Semua Tahun</option>
+                                                <option class="text-capitalize" value="2020">2020</option>
+                                                <option class="text-capitalize" value="2021">2021</option>
+                                                <option class="text-capitalize" value="2022">2022</option>
+                                                <option class="text-capitalize" value="2023">2023</option>
+                                                <option class="text-capitalize" value="2024">2024</option>
+                                                <option class="text-capitalize" value="2025">2025</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <select class="form-control text-capitalize" name="bulan" id="bulan">
+                                                <option value="semua" class="text-capitalize">Semua Bulan</option>
+                                                <option class="text-capitalize" value="01">Januari</option>
+                                                <option class="text-capitalize" value="02">Februari</option>
+                                                <option class="text-capitalize" value="03">Maret</option>
+                                                <option class="text-capitalize" value="04">April</option>
+                                                <option class="text-capitalize" value="05">Mei</option>
+                                                <option class="text-capitalize" value="06">Juni</option>
+                                                <option class="text-capitalize" value="07">Juli</option>
+                                                <option class="text-capitalize" value="08">Agustus</option>
+                                                <option class="text-capitalize" value="09">September</option>
+                                                <option class="text-capitalize" value="10">Oktober</option>
+                                                <option class="text-capitalize" value="11">November</option>
+                                                <option class="text-capitalize" value="12">Desember</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for=""></label>
+                                            <button class="btn btn-primary">Cari Data</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12">
-                <div class="card card-primary">
+                <div class="card">
                     <div class="card-header">
-                        <h4>Daftar Peminjaman Kunci</h4>
-                        <button class="btn btn-primary text-right">Pinjam Kunci
-                            <i class="fas fa-key"></i></button>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Nama Peminjam</th>
-                                        <th scope="col">Ruangan</th>
-                                        <th scope="col">Tanggal Pinjam</th>
-                                        <th scope="col">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% peminjaman_kunci.forEach((pinjam, index) => { %>
-                                    <tr>
-                                        <th scope="row"><%= index + 1 %></th>
-                                        <td><%= pinjam.User.nama_user %></td>
-                                        <td><%= pinjam.Kunci.nama_ruangan %></td>
-                                        <td><%= tanggal_pinjam %></td>
-                                        <% if (pinjam.status_peminjaman === "dipinjam") { %>
-                                        <td class="text-danger font-weight-bold">Masih dipinjam</td>
-                                        <% } else { %>
-                                        <td class="text-primary font-weight-bold">Sudah Dikembalikan</td>
-                                        <% } %>
-                                    </tr>
-                                    <!-- <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td class="text-primary font-weight-bold">Sudah Dikembalikan</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td>Larry</td>
-                                        <td>Larry</td>
-                                        <td>the Bird</td>
-                                        <td class="text-primary font-weight-bold">Sudah Dikembalikan</td>
-                                    </tr> -->
-                                    <% }) %>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-12">
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h4>Daftar Pengajuan Aduan</h4>
-                        <a href="/admin/aduan_lapor" class="btn btn-primary text-right">Menyelsaikan Aduan <i
-                                class="fas fa-paper-plane"></i></a>
-                    </div>
-                    <div class="card-body">
-                        <% if(aduans.length) { %>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Nama Pengadu</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Deskripsi Aduan</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% aduans.forEach((aduan, index) => { %>
-                                    <tr>
-                                        <th scope="row"><%= index + 1 %></th>
-                                        <td><%= aduan.User.nama_user %></td>
-                                        <% if (aduan.status_aduan === 'belum') { %>
-                                        <td class="text-danger text-capitalize font-weight-bold">Belum <br>
-                                            diselsaikan
-                                        </td>
-                                        <% } else { %>
-                                        <td class="text-primary text-capitalize font-weight-bold">Sudah <br>
-                                            diselsaikan
-                                        </td>
-                                        <% } %>
-                                        <td><%= aduan.deskripsi_aduan %></td>
-                                    </tr>
-                                    <% }) %>
-                                </tbody>
-                            </table>
-                        </div>
+                        <% if (data_bulan_ini) { %>
+                        <h4>Data Aduan Lapor - <%= data_bulan_ini %>, <%= data_tahun_ini %></h4>
                         <% } else { %>
-                        <div class="text-center">
-                            <h3 class="mt-3 mb-5">Belum ada aduan yang masuk </h3>
-                            <img src="/images/svg/undraw_empty.svg" style="width:30rem" alt="">
-                        </div>
+                        <h4>Data Aduan Lapor - Semua</h4>
                         <% } %>
                     </div>
+                    <div class="card-body">
+                        <div class="data-aduan">
+                            <canvas id="aduan-lapor-chart" width="20" height="20"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <% if (data_bulan_ini) { %>
+                        <h4>Data Aduan Kehilangan - <%= data_bulan_ini %>, <%= data_tahun_ini %></h4>
+                        <% } else { %>
+                        <h4>Data Aduan Kehilangan - Semua</h4>
+                        <% } %>
+                    </div>
+                    <div class="card-body">
+                        <div class="data-aduan">
+                            <canvas id="aduan-kehilangan-chart" width="20" height="20"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-lg-4 col-md-4 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Data Peminjaman Kunci</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="data-aduan">
+                            <canvas id="peminjaman-kunci-chart" width="20" height="20"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
         </div>
     </section>
 </div>
@@ -147,95 +153,72 @@
 
 <script>
     $(document).ready(function () {
-        const RoleId = document.getElementById("RoleId").value;
-        const url = `http://127.0.0.1:3000/api/aduan`;
-        // const url = 'http://127.0.0.1:3000/operator/aduan_lapor/perMonth';
-        $.ajax({
-            url: url,
-            contentType: "application/json",
-            dataType: 'json',
-            success: function (result) {
-                console.log(result.dataByMonth);
-                const ctx = document.getElementById("chartAduan").getContext('2d');
-                const myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ["July", "Agustus"],
-                        datasets: [{
-                            label: 'Umum',
-                            data: [10, 11],
-                            borderWidth: 2,
-                            backgroundColor: 'rgba(63,82,227,.8)',
-                            borderWidth: 0,
-                            borderColor: 'transparent',
-                            pointBorderWidth: 0,
-                            pointRadius: 3.5,
-                            pointBackgroundColor: 'transparent',
-                            pointHoverBackgroundColor: 'rgba(63,82,227,.8)',
-                        }, {
-                            label: 'Akademik',
-                            data: [8, 3],
-                            borderWidth: 2,
-                            backgroundColor: 'rgba(75, 192, 192, .8)',
-                            borderWidth: 0,
-                            borderColor: 'transparent',
-                            pointBorderWidth: 0,
-                            pointRadius: 3.5,
-                            pointBackgroundColor: 'transparent',
-                            pointHoverBackgroundColor: 'rgba(75, 192, 192, .8)',
-                        }, {
-                            label: 'Keuangan dan Kepegawaian',
-                            data: [8, 2],
-                            borderWidth: 2,
-                            backgroundColor: 'rgba(153, 102, 255, 0.8)',
-                            borderWidth: 0,
-                            borderColor: 'transparent',
-                            pointBorderWidth: 0,
-                            pointRadius: 3.5,
-                            pointBackgroundColor: 'transparent',
-                            pointHoverBackgroundColor: 'rgba(153, 102, 255, 0.8)',
-                        }, {
-                            label: 'Kemahasiswaan',
-                            data: [8, 4],
-                            borderWidth: 2,
-                            backgroundColor: 'rgba(255, 159, 64, 0.8)',
-                            borderWidth: 0,
-                            borderColor: 'transparent',
-                            pointBorderWidth: 0,
-                            pointRadius: 3.5,
-                            pointBackgroundColor: 'transparent',
-                            pointHoverBackgroundColor: 'rgba(255, 159, 64, 0.8)',
-                        }]
-                    },
-                    options: {
-                        legend: {
-                            display: false
-                        },
-                        scales: {
-                            yAxes: [{
-                                gridLines: {
-                                    // display: false,
-                                    drawBorder: false,
-                                    color: '#f2f2f2',
-                                },
-                                ticks: {
-                                    beginAtZero: true,
-                                    stepSize: 0,
-                                    callback: function (value, index, values) {
-                                        return + value;
-                                    }
-                                }
-                            }],
-                            xAxes: [{
-                                gridLines: {
-                                    display: false,
-                                    tickMarkLength: 15,
-                                }
-                            }]
-                        },
-                    }
-                });
-            }
-        })
+        let total_aduan_lapor = $("#total_aduan_lapor").val();
+        let aduan_lapor_belum = $("#aduan_lapor_belum").val();
+        let aduan_lapor_sudah = $("#aduan_lapor_sudah").val();
+        const getAduanLapor = () => {
+            const label = ['Total Aduan', 'Belum Selesai', 'Sudah Selesai']
+            const value = [total_aduan_lapor, aduan_lapor_belum, aduan_lapor_sudah];
+            const ctx1 = document.getElementById('aduan-lapor-chart').getContext('2d');
+            const chartAduanLapor = new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: label,
+                    datasets: [{
+                        data: value,
+                        backgroundColor: [
+                            'rgba(255, 206, 86, 0.8)', //kuning
+                            'rgba(255, 99, 132, 0.8)', //merah
+                            'rgba(54, 162, 235, 0.8)', //biru
+                        ]
+                    }],
+                },
+                options: {}
+            });
+        }
+        let total_aduan_hilang = $("#total_aduan_hilang").val();
+        let aduan_hilang_belum = $("#aduan_hilang_belum").val();
+        let aduan_hilang_sudah = $("#aduan_hilang_sudah").val();
+        const getAduanKehilangan = () => {
+            const label = ['Total Aduan', 'Belum Selesai', 'Sudah Selesai']
+            const value = [total_aduan_hilang, aduan_hilang_belum, aduan_hilang_sudah];
+            const ctx2 = document.getElementById('aduan-kehilangan-chart').getContext('2d');
+            const chartAduanKehilangan = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: label,
+                    datasets: [{
+                        data: value,
+                        backgroundColor: [
+                            'rgba(255, 206, 86, 0.8)', //kuning
+                            'rgba(255, 99, 132, 0.8)', //merah
+                            'rgba(54, 162, 235, 0.8)', //biru
+                        ]
+                    }],
+                },
+                options: {}
+            });
+        }
+
+        // const ctx3 = document.getElementById('peminjaman-kunci-chart').getContext('2d');
+        // const chartPeminjamanKunci = new Chart(ctx3, {
+        // type: 'doughnut',
+        // data: {
+        // labels: ['Red', 'Blue', 'Yellow'],
+        // datasets: [{
+        // data: [10, 20, 30],
+        // backgroundColor: [
+        // 'rgba(255, 99, 132, 0.8)',
+        // 'rgba(54, 162, 235, 0.8)',
+        // 'rgba(255, 206, 86, 0.8)',
+        // ]
+        // }],
+        // },
+        // options: {}
+        // });
+
+        getAduanLapor();
+        getAduanKehilangan();
+
     });
 </script>

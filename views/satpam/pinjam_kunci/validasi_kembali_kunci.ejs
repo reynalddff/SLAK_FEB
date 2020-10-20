@@ -52,32 +52,39 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% peminjaman_kunci.forEach((pinjam, index) => { %>
+                                    <% detail_peminjaman.forEach((pinjam, index) => { %>
                                     <tr>
                                         <th scope="row"><%= index + 1 %></th>
-                                        <td><%= pinjam.User.nama_user %></td>
-                                        <td><%= pinjam.User.telp_user %></td>
+                                        <td><%= pinjam.Data_Peminjaman.User.nama_user %></td>
+                                        <td><%= pinjam.Data_Peminjaman.User.telp_user %></td>
                                         <td><%= pinjam.Kunci.nama_ruangan %></td>
-                                        <td><%= pinjam.tanggal_pinjam %></td>
-                                        <% if (pinjam.status_peminjaman === 'dipinjam') { %>
+                                        <td><%= pinjam.Data_Peminjaman.tanggal_pinjam %></td>
+                                        <% if (pinjam.status === 'dipinjam') { %>
                                         <td>
-                                            <a class="btn btn-success btn-action" data-toggle="tooltip" title="Validasi"
-                                                onclick="validasi_kunci('<%= pinjam.id %>')">Validasi Pengembalian
+                                            <!-- <a class="btn btn-success btn-action" data-toggle="tooltip" title="Validasi"
+                                                onclick="validasi_kunci('<%= pinjam.Data_Peminjaman.id %>')">Validasi Pengembalian
+                                            </a> -->
+                                            <a href="#modalKembaliKunci" type="button" class="btn btn-success"
+                                                id="validasi-pengembalian" data-toggle="modal" 
+                                                data-target="#modalKembaliKunci" data-id="<%= pinjam.Data_Peminjaman.id %>"
+                                                data-tanggal-pinjam="<%= pinjam.Data_Peminjaman.tanggal_pinjam %>"
+                                                data-nama_ruangan="<%= pinjam.Kunci.nama_ruangan %>">
+                                                Validasi Pengembalian
                                             </a>
                                         </td>
                                         <% } else { %>
                                         <td>
-                                            <a href="pengajuan_aduan_komentar.html" class="btn btn-secondary disabled"
+                                            <a href="#" class="btn btn-secondary disabled"
                                                 disabled>Validasi
                                                 Pengembalian</a>
                                         </td>
                                         <% } %>
                                         <td>
-                                            <a href="#QRCodeGenerator" data-toggle="modal" data-id="<%= pinjam.id %>"
-                                                data-tanggal_pinjam="<%= pinjam.tanggal_pinjam %>"
-                                                data-tanggal_kembali="<%= pinjam.tanggal_kembali %>"
-                                                data-nama_user="<%= pinjam.User.nama_user %>"
-                                                data-telp_user="<%= pinjam.User.telp_user %>"
+                                            <a href="#QRCodeGenerator" data-toggle="modal" data-id="<%= pinjam.Data_Peminjaman.id %>"
+                                                data-tanggal_pinjam="<%= pinjam.Data_Peminjaman.tanggal_pinjam %>"
+                                                data-tanggal_kembali="<%= pinjam.Data_Peminjaman.tanggal_kembali %>"
+                                                data-nama_user="<%= pinjam.Data_Peminjaman.User.nama_user %>"
+                                                data-telp_user="<%= pinjam.Data_Peminjaman.User.telp_user %>"
                                                 data_kunci="<%= pinjam.Kunci.nama_ruangan %>"
                                                 data-target="#QRCodeGenerator" id="qrcode-pinjam-kunci"
                                                 class="btn btn-dark">
@@ -110,6 +117,45 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-dark" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalKembaliKunci" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Pinjam Kunci</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/satpam/pinjam_kunci/validasi_kembali_kunci" method="POST">
+                    <input type="hidden" id="id_peminjaman" name="id_peminjaman" value="">
+                    <div class="form-group">
+                        <label for="nama-kunci">Nama Kunci</label>
+                        <input type="text" class="form-control" name="nama_kunci" id="nama_kunci" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="tanggal_pinjam">Tanggal Pinjam</label>
+                        <input type="text" class="form-control" name="tanggal_pinjam" id="tanggal_pinjam" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="tanggal_kembali">Tanggal Kembali</label>
+                        <input type="text" class="form-control datepicker" name="tanggal_kembali" id="tanggal_kembali">
+                    </div>
+                    <div class="form-group">
+                        <label for="keperluan">Nama Pengembali Kunci</label>
+                        <input type="text" class="form-control" name="nama_pengembali" id="nama_pengembali" required>
+                    </div>
+                    <button type=" submit" class="btn btn-primary" style="float: right;">Validasi Pengembalian</button>
+                    <button type="button" class="btn btn-secondary mr-2" style="float: right;"
+                        data-dismiss="modal">Close</button>
+                </form>
             </div>
         </div>
     </div>
@@ -163,5 +209,33 @@
 
             qrcode.makeCode(`nama peminjam: ${nama_user} & no teleponnya: ${telp_user} pada tanggal: ${tanggal_pinjam} `);
         });
+
+        $('#pinjam-kunci').on('click', '#validasi-pengembalian', function() {
+            const id = $(this).data('id');
+            const nama_ruangan = $(this).data('nama_ruangan')
+            const tanggal_pinjam = $(this).data('tanggal-pinjam');
+
+            $(".datepicker").flatpickr({
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "Y-m-d",
+            minDate: tanggal_pinjam,
+        });
+
+            $('#modalKembaliKunci').modal('show');
+            $('#id_peminjaman').val(id);
+            $('#nama_kunci').val(nama_ruangan);
+            $('#tanggal_pinjam').val(tanggal_pinjam)
+        })
+
+        $("#pinjam-kunci").DataTable({})
+    });
+
+    $(function () {
+        
+
+        // $('.tanggal_dipilih').change(function () {
+        //     $('.datepicker').val($(this).val());
+        // });
     });
 </script>
