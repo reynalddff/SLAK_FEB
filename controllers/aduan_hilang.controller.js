@@ -2,6 +2,7 @@ const { Aduan_Hilang, User, Notifications } = require("./../models");
 const { Op } = require("sequelize");
 const excel = require("exceljs");
 const db = require("../models");
+const { sendEmailNotification } = require("./../helper/sendEmail");
 
 exports.getAduanKehilangan = async (req, res) => {
   if (req.user.RoleId === 1) {
@@ -157,6 +158,24 @@ exports.createAduanHilang = async (req, res) => {
       UserId: req.user.id,
     });
 
+    const satpam = await User.findOne({
+      where: {
+        RoleId: 7,
+      },
+    });
+
+    const karyawan = await User.findOne({
+      where: {
+        id: aduan.UserId,
+      },
+    });
+
+    await sendEmailNotification(
+      "Aduan Hilang",
+      "testing.feb.psik@gmail.com", //sementara doang
+      `<p>Telah masuk aduan hilang dari <b>${karyawan.nama_user}</b>, silahkan segera divalidasi. Terimakasih.</p>`
+    );
+
     req.flash("success", "Aduan berhasil ditambahkan");
     res.redirect("/karyawan/aduan_hilang");
   }
@@ -165,6 +184,7 @@ exports.createAduanHilang = async (req, res) => {
 exports.validasiSatpamAduan = async (req, res) => {
   const { id } = req.params;
   const aduan = await Aduan_Hilang.findOne({ where: { id } });
+  const user = await User.findOne({ where: { id: aduan.UserId } });
   if (!aduan) {
     req.flash("error", "Aduan tidak ditemukan");
     if (req.user.RoleId === 2) {
@@ -175,6 +195,13 @@ exports.validasiSatpamAduan = async (req, res) => {
   }
 
   await aduan.update({ status_aduan: "menunggu validasi admin / kasubbag" });
+
+  await sendEmailNotification(
+    "Aduan Hilang",
+    user.email,
+    `<p>Aduan yang anda laporkan telah divalidasi oleh satpam. Silahkan menunggu untuk diverifikasi oleh kasubbag. Terimakasih</p>`
+  );
+
   req.flash("success", "Aduan berhasil divalidasi");
   if (req.user.RoleId === 2) {
     res.redirect("/admin/aduan_hilang");
@@ -186,12 +213,18 @@ exports.validasiSatpamAduan = async (req, res) => {
 exports.validasiAdminAduan = async (req, res) => {
   const { id } = req.params;
   const aduan = await Aduan_Hilang.findOne({ where: { id } });
+  const user = await User.findOne({ where: { id: aduan.UserId } });
   if (!aduan) {
     req.flash("error", "Aduan tidak ditemukan");
     res.redirect("/admin/aduan_hilang");
   }
 
   await aduan.update({ status_aduan: "divalidasi" });
+  await sendEmailNotification(
+    "Aduan Hilang",
+    user.email,
+    `<p>Aduan yang anda laporkan telah diverifiaksi oleh kasubbag. Silahkan mengambil surat di <b>Kantor Satpam Gedung Utama Lantai 1</b>. Terimakasih</p>`
+  );
   req.flash("success", "Aduan berhasil divalidasi");
   if (req.user.RoleId === 2) {
     res.redirect("/admin/aduan_hilang/validasi_admin");
@@ -338,7 +371,6 @@ exports.downloadAduanHilang = async (req, res) => {
     }
   }
 
-
   let workbook = new excel.Workbook();
   let worksheet = workbook.addWorksheet("Aduan");
 
@@ -366,4 +398,4 @@ exports.downloadAduanHilang = async (req, res) => {
 
   const dataExport = await workbook.xlsx.write(res);
   return res.status(200).end();
-}
+};

@@ -2,6 +2,7 @@ const { User, Aduan_Lapor, Komentar, Notifications } = require("./../models");
 const excel = require("exceljs");
 const Op = require("sequelize").Op;
 const db = require("../models");
+const { sendEmailNotification } = require("./../helper/sendEmail");
 
 require("express-async-errors");
 
@@ -92,6 +93,24 @@ exports.createAduan = async (req, res) => {
       tujuan_notif: aduan.tujuan_aduan,
       UserId: req.user.id,
     });
+
+    const operator = await User.findOne({
+      where: {
+        RoleId: aduan.tujuan_aduan,
+      },
+    });
+
+    const karyawan = await User.findOne({
+      where: {
+        id: aduan.UserId,
+      },
+    });
+
+    await sendEmailNotification(
+      "Aduan Lapor",
+      operator.email,
+      `<p> Telah masuk aduan lapor dari <b>${karyawan.nama_user}</b>, silahkan segera diselsaikan. Terimakasih. </p>`
+    );
 
     req.flash("success", "Aduan berhasil ditambahkan");
     res.redirect("/karyawan/aduan_lapor");
@@ -251,6 +270,14 @@ exports.tanggapAduan = async (req, res) => {
     tujuan_notif: userAduan.id,
     UserId: req.user.id,
   });
+
+  await sendEmailNotification(
+    "Aduan Lapor",
+    userAduan.email,
+    `<p>Aduan yang anda laporkan telah diselsaikan oleh operator kami. 
+    Silahkan memberikan <b>nilai</b> dan <b>komentar</b> atas aduan yang telah diselsaikan. 
+    Terimakasih.</p>`
+  );
 
   if (req.user.RoleId === 2) {
     req.flash("success", "Aduan berhasil ditanggapi");
