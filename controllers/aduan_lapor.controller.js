@@ -159,6 +159,41 @@ exports.getContactProfile = async (req, res) => {
   });
 };
 
+exports.updateAduan = async (req, res) => {
+  if (req.body.judul_aduan && req.body.deskripsi_aduan) {
+    // check file upload
+    if (req.fileValidationError) {
+      req.flash("failed", "Foto harus memiliki format JPG/JPEG/PNG");
+      res.redirect("/karyawan/aduan_lapor");
+    }
+
+    const aduan = await Aduan_Lapor.findOne({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    //update aduan
+    await aduan.update({
+      judul_aduan: req.body.judul_aduan,
+      lokasi_aduan: req.body.lokasi_aduan || "-",
+      deskripsi_aduan: req.body.deskripsi_aduan,
+      tujuan_aduan: req.body.tujuan_aduan,
+      latitude: req.body.lat,
+      longitude: req.body.long,
+      foto_aduan: req.file === undefined ? "" : req.file.filename,
+      status_aduan: "belum",
+      UserId: req.user.id,
+    });
+
+    req.flash("success", "Aduan berhasil diupdate");
+    res.redirect("/karyawan/aduan_lapor");
+  } else {
+    req.flash("failed", "Input field judul dan deskripsi aduan harus terisi");
+    res.redirect("/karyawan/aduan_lapor");
+  }
+};
+
 // Operator & Admin
 exports.getAduanByTujuan = (req, res) => {
   const filterByTujuan = async (RoleId) => {

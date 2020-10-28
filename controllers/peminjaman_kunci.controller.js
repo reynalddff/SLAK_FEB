@@ -162,58 +162,56 @@ exports.updateContactProfile2 = async (req, res) => {
 };
 
 exports.pinjamKunci = async (req, res) => {
-  const {
-    id_kunci,
-    nama_kunci,
-    tanggal_pinjam,
-    keperluan,
-    identitas,
-  } = req.body;
+  const { id_kunci, tanggal_pinjam, keperluan, identitas } = req.body;
+  try {
+    const kunci = await Kunci.findOne({
+      where: { id: id_kunci },
+    });
 
-  const kunci = await Kunci.findOne({
-    where: { id: id_kunci },
-  });
+    const pinjamKunci = await Data_Peminjaman.create({
+      keperluan,
+      identitas,
+      status_peminjaman: "menunggu validasi",
+      tanggal_pinjam: tanggal_pinjam,
+      tanggal_kembali: moment(tanggal_pinjam).add(1, "days"),
+      UserId: req.user.id,
+    });
 
-  const pinjamKunci = await Data_Peminjaman.create({
-    keperluan,
-    identitas,
-    status_peminjaman: "menunggu validasi",
-    tanggal_pinjam: tanggal_pinjam,
-    tanggal_kembali: moment(tanggal_pinjam).add(1, "days"),
-    UserId: req.user.id,
-  });
+    const pinjam_kunci_detail = await Detail_Peminjaman.create({
+      status: "menunggu validasi",
+      DataPeminjamanId: pinjamKunci.id,
+      KunciId: kunci.id,
+    });
 
-  const pinjam_kunci_detail = await Detail_Peminjaman.create({
-    status: "menunggu validasi",
-    DataPeminjamanId: pinjamKunci.id,
-    KunciId: id_kunci,
-  });
+    // const userPeminjam = await User.findOne({
+    //   where: {
+    //     id: pinjamKunci.id,
+    //   },
+    // });
 
-  const userPeminjam = await User.findOne({
-    where: {
-      id: pinjamKunci,
-    },
-  });
+    await Notifications.create({
+      layananId: pinjamKunci.id,
+      jenis_notif: "peminjaman kunci",
+      deskripsi_notif: `Permintaan peminjaman kunci ${kunci.nama_ruangan} dari ${req.user.nama_user}`,
+      tujuan_notif: "7", //Role Id Satpam
+      UserId: req.user.id,
+    });
 
-  await Notifications.create({
-    layananId: pinjamKunci.id,
-    jenis_notif: "peminjaman kunci",
-    deskripsi_notif: `Permintaan peminjaman kunci ${kunci.nama_ruangan} dari ${req.user.nama_user}`,
-    tujuan_notif: "7", //Role Id Satpam
-    UserId: req.user.id,
-  });
+    // await sendEmailNotification(
+    //   "Peminjaman Kunci",
+    //   "testing.feb.psik@gmail.com", //sementara doang
+    //   `<p>Telah masuk layanan peminjaman <b> kunci ${kunci.nama_ruangan} </b> dengan peminjam <b> ${userPeminjam.nama_user} </b> untuk tanggal <b> ${tanggal_pinjam} </b>, silahkan segera diproses. Terimakasih.</p>`
+    // );
 
-  await sendEmailNotification(
-    "Peminjaman Kunci",
-    "testing.feb.psik@gmail.com", //sementara doang
-    `<p>Telah masuk layanan peminjaman <b> kunci ${kunci.nama_ruangan} </b> dengan peminjam <b> ${userPeminjam.nama_user} </b> untuk tanggal <b> ${tanggal_pinjam} </b>, silahkan segera diproses. Terimakasih.</p>`
-  );
-
-  req.flash(
-    "success",
-    "Peminjaman kunci berhasil diajukan. Silahkan menunggu validasi dari Satpam"
-  );
-  res.redirect("/karyawan/pinjam_kunci");
+    req.flash(
+      "success",
+      "Peminjaman kunci berhasil diajukan. Silahkan menunggu validasi dari Satpam"
+    );
+    res.redirect("/karyawan/pinjam_kunci");
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
 };
 
 // buat satpam & admin
@@ -323,7 +321,7 @@ exports.tolakPinjamKunci = async (req, res) => {
       tanggal_pinjam: dataPinjamKunci.tanggal_pinjam,
       tanggal_kembali: dataPinjamKunci.tanggal_kembali,
       nama_pengembali: "Peminjaman ditolak satpam",
-      status_pengembalian: "sudah kembali",
+      status_pengembalian: "sudah dikembalikan",
       DataPeminjamanId: dataPinjamKunci.id,
     });
     if (req.user.RoleId === 7) {

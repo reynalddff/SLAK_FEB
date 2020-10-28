@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
-  up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Data_Peminjamans', {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('Data_Peminjamans', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -18,10 +18,10 @@ module.exports = {
         type: Sequelize.STRING
       },
       tanggal_pinjam: {
-        type: Sequelize.STRING
+        type: Sequelize.DATEONLY
       },
       tanggal_kembali: {
-        type: Sequelize.STRING
+        type: Sequelize.DATEONLY
       },
       createdAt: {
         allowNull: false,
@@ -33,7 +33,7 @@ module.exports = {
       }
     });
   },
-  down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Data_Peminjamans');
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('Data_Peminjamans');
   }
 };

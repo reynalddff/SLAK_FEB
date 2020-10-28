@@ -1,0 +1,93 @@
+<%- include ../../partials/karyawan_layout/header.ejs %>
+<%- include ../../partials/karyawan_layout/sidebar.ejs %>
+
+<!-- Main Content -->
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Pengajuan Aduan</h1>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="text-capitalize">Form Pengajuan Aduan dan Layanan</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="/karyawan/aduan_lapor/edit/<%= aduan.id %>" id="form_pengaduan" enctype="multipart/form-data"
+                            method="POST">
+                            <input type="hidden" class="form-control" id="lat" name="lat" value=""></input>
+                            <input type="hidden" class="form-control" id="long" name="long" value=""></input>
+                            <div class="form-group">
+                                <label for="">Judul Aduan</label>
+                                <input class="form-control" id="judul_aduan" name="judul_aduan" value="<%= aduan.judul_aduan %>" required></input>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Lokasi aduan</label>
+                                <input class="form-control" id="lokasi_aduan" value="<%= aduan.lokasi_aduan %>" name="lokasi_aduan"></input>
+                                <small>Harap kosongkan jika tidak ada membutuhkan sebuah lokasi</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Keluhan / Saran / Masukan / Kritik / Pertanyaan Umum</label>
+                                <textarea class="form-control" rows="1" id="deskripsi_aduan"
+                                    name="deskripsi_aduan" required><%= aduan.deskripsi_aduan %></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleFormControlFile1">Input Photo</label>
+                                <input type="file" name="foto_aduan" class="form-control-file" accept="image/*"
+                                    id="exampleFormControlFile1" required>
+                                <small>Foto harus memiliki format JPG/PNG/JPEG dan maksimal
+                                    ukuran 10 MB</small>
+                            </div>
+                            <div class="form-group">
+                                <img src="<%= aduan.foto_aduan%>" alt="" style="width: 250px;">
+                                <small>Foto Sebelumnya</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Tujuan Aduan</label>
+                                <select class="form-control text-capitalize" id="tujuan_aduan" name="tujuan_aduan"
+                                    required>
+                                    <option value="" class="text-capitalize">--Pilih Tujuan--</option>
+                                    <% roles.forEach(role => {%>
+                                    <option class="text-capitalize" value="<%=role.id%>">
+                                        <%=role.role%>
+                                    </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" type="submit" style="float: right;">Update Aduan</button>
+                            <a href="/karyawan/aduan_lapor" class="mr-3 btn btn-dark"
+                                style="float: right;">Kembali</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<%- include ../../partials/footer.ejs %>
+
+<script>
+    const form = document.querySelector('form');
+    form.addEventListener("submit", submit_geo_coords);
+
+    function submit_geo_coords(event) {
+
+        event.preventDefault();
+        var x = document.getElementById("lat");
+        var y = document.getElementById("long");
+
+        if (navigator.geolocation) {
+            console.log("Geolocation is available");
+            navigator.geolocation.getCurrentPosition(function (position) {
+                console.log(position.coords);
+                x.value = position.coords.latitude
+                y.value = position.coords.longitude;
+                form.submit(); // Resubmit the form when the data is available
+            });
+        } else {
+            console.log("Geolocation is not available");
+        }
+    }
+</script>

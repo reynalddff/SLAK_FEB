@@ -95,7 +95,7 @@
                                         <% } %>
                                         <td>
                                             <a class="btn btn-info btn-action mr-1 <%= aduan.status_aduan === 'sudah' ? 'disabled' : '' %>"
-                                                data-toggle="tooltip" title="Edit">
+                                                data-toggle="tooltip" href="/karyawan/aduan_lapor/edit/<%= aduan.id %>" title="Edit">
                                                 <i class="fas fa-pencil-alt"></i>
                                             </a>
                                             <% if (aduan.status_aduan === 'sudah' && aduan.Komentar.deskripsi_komentar) { %>
