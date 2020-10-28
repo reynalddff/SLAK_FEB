@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const {
   User,
   Kunci,
@@ -6,6 +7,9 @@ const {
   Detail_Peminjaman,
   Data_Pengembalian,
 } = require("./../models");
+=======
+const { User, Kunci, Notifications, Data_Peminjaman, Detail_Peminjaman, Data_Pengembalian } = require("./../models");
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
 const Op = require("sequelize").Op;
 const moment = require("moment");
 const { sendEmailNotification } = require("./../helper/sendEmail");
@@ -30,9 +34,15 @@ exports.getPeminjamanKunci = async (req, res) => {
   const dataPinjam = await Data_Peminjaman.findOne({
     where: {
       status_peminjaman: "menunggu validasi" || "sudah divalidasi",
+<<<<<<< HEAD
       UserId: req.user.id,
     },
   });
+=======
+      UserId: req.user.id
+    }
+  })
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
 
   const { tanggal } = req.query;
 
@@ -49,7 +59,11 @@ exports.getPeminjamanKunci = async (req, res) => {
           },
         },
       ],
+<<<<<<< HEAD
       order: [["nama_ruangan", "ASC"]],
+=======
+      order: [["nama_ruangan", "ASC"]]
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
     });
     res.render("karyawan/pinjam_kunci/pinjam_kunci", {
       dataPinjam,
@@ -162,6 +176,7 @@ exports.updateContactProfile2 = async (req, res) => {
 };
 
 exports.pinjamKunci = async (req, res) => {
+<<<<<<< HEAD
   const { id_kunci, tanggal_pinjam, keperluan, identitas } = req.body;
   try {
     const kunci = await Kunci.findOne({
@@ -212,11 +227,48 @@ exports.pinjamKunci = async (req, res) => {
     console.log(error);
     return false;
   }
+=======
+  const { id_kunci, nama_kunci, tanggal_pinjam, keperluan, identitas } = req.body;
+  const kunci = await Kunci.findOne({
+    where: { id: id_kunci },
+  });
+
+  const pinjamKunci = await Data_Peminjaman.create({
+    keperluan,
+    identitas,
+    status_peminjaman: "menunggu validasi",
+    tanggal_pinjam: tanggal_pinjam,
+    tanggal_kembali: moment(tanggal_pinjam).add(1, "days"),
+    UserId: req.user.id,
+  });
+
+  const pinjam_kunci_detail = await Detail_Peminjaman.create({
+    status: "menunggu validasi",
+    DataPeminjamanId: pinjamKunci.id,
+    KunciId: id_kunci,
+  });
+
+  await Notifications.create({
+    layananId: pinjamKunci.id,
+    jenis_notif: "peminjaman kunci",
+    deskripsi_notif: `Permintaan peminjaman kunci ${kunci.nama_ruangan} dari ${req.user.nama_user}`,
+    tujuan_notif: "7", //Role Id Satpam
+    UserId: req.user.id,
+  });
+
+
+  req.flash(
+    "success",
+    "Peminjaman kunci berhasil diajukan. Silahkan menunggu validasi dari Satpam"
+  );
+  res.redirect("/karyawan/pinjam_kunci");
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
 };
 
 // buat satpam & admin
 exports.validasiPinjamKunci = async (req, res) => {
   const dataPinjamKunci = await Data_Peminjaman.findOne({
+<<<<<<< HEAD
     where: { id: req.params.id },
     include: [{ model: User }],
   });
@@ -239,13 +291,35 @@ exports.validasiPinjamKunci = async (req, res) => {
 
   if (dataPinjamKunci.status_peminjaman === "menunggu validasi") {
     await dataPinjamKunci.update({ status_peminjaman: "sudah divalidasi" });
+=======
+    where: {id: req.params.id},
+    include: [{model: User}]
+  });
+
+  const dataDetailPinjamKunci = await Detail_Peminjaman.findOne({
+    where: {
+      DataPeminjamanId: dataPinjamKunci.id
+    },
+    include: [
+      { model: Kunci }, 
+      { model: Data_Peminjaman, include: [{model: User}] }
+    ],
+  });
+
+  if (dataPinjamKunci.status_peminjaman === "menunggu validasi") {
+    await dataPinjamKunci.update({status_peminjaman: "sudah divalidasi"});
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
     await dataDetailPinjamKunci.update({ status: "dipinjam" });
     await Data_Pengembalian.create({
       tanggal_pinjam: dataPinjamKunci.tanggal_pinjam,
       tanggal_kembali: dataPinjamKunci.tanggal_kembali,
       nama_pengembali: "",
       status_pengembalian: "masih dipinjam",
+<<<<<<< HEAD
       DataPeminjamanId: dataPinjamKunci.id,
+=======
+      DataPeminjamanId: dataPinjamKunci.id 
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
     });
     if (req.user.RoleId === 7) {
       // create notification validasi kunci untuk penguna dari satpam
@@ -276,6 +350,7 @@ exports.validasiPinjamKunci = async (req, res) => {
       `<p>Peminjaman kunci yang kamu ajukan sudah disetujui oleh satpam, silahkan ambil ke <b>Kantor Satpam Gedung Rektorat Lama Lantai 1</b> Terimakasih.</p>`
     );
   } else {
+<<<<<<< HEAD
     if (req.user.RoleId === 7) {
       req.flash(
         "failed",
@@ -288,18 +363,32 @@ exports.validasiPinjamKunci = async (req, res) => {
         "Validasi peminjaman kunci gagal! Silahkan dicoba kembali."
       );
       res.redirect("/admin/pinjam_kunci/validasi_pinjam_kunci");
+=======
+    if(req.user.RoleId === 7) {
+      req.flash("failed", "Validasi peminjaman kunci gagal! Silahkan dicoba kembali.");
+      res.redirect("/satpam/pinjam_kunci/validasi_pinjam_kunci")
+    } else if (req.user.RoleId === 2) {
+      req.flash("failed", "Validasi peminjaman kunci gagal! Silahkan dicoba kembali.");
+      res.redirect("/admin/pinjam_kunci/validasi_pinjam_kunci")
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
     }
   }
 };
 
 exports.tolakPinjamKunci = async (req, res) => {
   const dataPinjamKunci = await Data_Peminjaman.findOne({
+<<<<<<< HEAD
     where: { id: req.params.id },
     include: [{ model: User }],
+=======
+    where: {id: req.params.id},
+    include: [{model: User}]
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
   });
 
   const dataDetailPinjamKunci = await Detail_Peminjaman.findOne({
     where: {
+<<<<<<< HEAD
       DataPeminjamanId: dataPinjamKunci.id,
     },
     include: [
@@ -316,13 +405,31 @@ exports.tolakPinjamKunci = async (req, res) => {
 
   if (dataPinjamKunci.status_peminjaman === "menunggu validasi") {
     await dataPinjamKunci.update({ status_peminjaman: "dikembalikan" });
+=======
+      DataPeminjamanId: dataPinjamKunci.id
+    },
+    include: [
+      { model: Kunci }, 
+      { model: Data_Peminjaman, include: [{model: User}] }
+    ],
+  });
+
+
+  if (dataPinjamKunci.status_peminjaman === "menunggu validasi") {
+    await dataPinjamKunci.update({status_peminjaman: "dikembalikan"});
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
     await dataDetailPinjamKunci.update({ status: "dikembalikan" });
     await Data_Pengembalian.create({
       tanggal_pinjam: dataPinjamKunci.tanggal_pinjam,
       tanggal_kembali: dataPinjamKunci.tanggal_kembali,
       nama_pengembali: "Peminjaman ditolak satpam",
+<<<<<<< HEAD
       status_pengembalian: "sudah dikembalikan",
       DataPeminjamanId: dataPinjamKunci.id,
+=======
+      status_pengembalian: "sudah kembali",
+      DataPeminjamanId: dataPinjamKunci.id 
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
     });
     if (req.user.RoleId === 7) {
       // create notification tolak kunci untuk penguna dari satpam
@@ -354,6 +461,7 @@ exports.tolakPinjamKunci = async (req, res) => {
       `<p>Peminjaman kunci yang kamu ajukan ditolak oleh satpam karena alasan tertentu, silahkan meminjam kunci yang lain atau dilain waktu. Terimakasih.</p>`
     );
   } else {
+<<<<<<< HEAD
     if (req.user.RoleId === 7) {
       req.flash(
         "failed",
@@ -366,28 +474,50 @@ exports.tolakPinjamKunci = async (req, res) => {
         "Penolakan peminjaman kunci gagal! Silahkan dicoba kembali."
       );
       res.redirect("/admin/pinjam_kunci/validasi_pinjam_kunci");
+=======
+    if(req.user.RoleId === 7) {
+      req.flash("failed", "Penolakan peminjaman kunci gagal! Silahkan dicoba kembali.");
+      res.redirect("/satpam/pinjam_kunci/validasi_pinjam_kunci")
+    } else if (req.user.RoleId === 2) {
+      req.flash("failed", "Penolakan peminjaman kunci gagal! Silahkan dicoba kembali.");
+      res.redirect("/admin/pinjam_kunci/validasi_pinjam_kunci")
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
     }
   }
 };
 
 exports.validasiKembaliKunci = async (req, res) => {
   const dataPinjamKunci = await Data_Peminjaman.findOne({
+<<<<<<< HEAD
     where: { id: req.body.id_peminjaman },
     include: [{ model: User }],
+=======
+    where: {id: req.body.id_peminjaman},
+    include: [{model: User}]
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
   });
 
   const dataDetailPinjamKunci = await Detail_Peminjaman.findOne({
     where: {
+<<<<<<< HEAD
       DataPeminjamanId: dataPinjamKunci.id,
     },
     include: [
       { model: Kunci },
       { model: Data_Peminjaman, include: [{ model: User }] },
+=======
+      DataPeminjamanId: dataPinjamKunci.id
+    },
+    include: [
+      { model: Kunci }, 
+      { model: Data_Peminjaman, include: [{model: User}] }
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
     ],
   });
 
   const dataKembaliKunci = await Data_Pengembalian.findOne({
     where: {
+<<<<<<< HEAD
       DataPeminjamanId: dataPinjamKunci.id,
     },
   });
@@ -399,13 +529,24 @@ exports.validasiKembaliKunci = async (req, res) => {
   });
 
   const { tanggal_kembali, nama_pengembali } = req.body;
+=======
+      DataPeminjamanId: dataPinjamKunci.id
+    }
+  });
+
+  const {tanggal_kembali, nama_pengembali} = req.body;
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
   if (dataDetailPinjamKunci.status === "dipinjam") {
     await dataPinjamKunci.update({ status_peminjaman: "dikembalikan" });
     await dataDetailPinjamKunci.update({ status: "dikembalikan" });
     await dataKembaliKunci.update({
       tanggal_kembali: tanggal_kembali,
       nama_pengembali: nama_pengembali,
+<<<<<<< HEAD
       status_pengembalian: "sudah dikembalikan",
+=======
+      status_pengembalian: "sudah dikembalikan", 
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
     });
     if (req.user.RoleId === 7) {
       // create notification tolak kunci  untuk penguna dari admin
@@ -430,6 +571,7 @@ exports.validasiKembaliKunci = async (req, res) => {
       req.flash("success", "Pengembalian kunci berhasil divalidasi");
       res.redirect("/admin/pinjam_kunci/validasi_kembali_kunci");
     }
+<<<<<<< HEAD
     // ngirim email
     await sendEmailNotification(
       "Peminjaman Kunci",
@@ -449,6 +591,15 @@ exports.validasiKembaliKunci = async (req, res) => {
         "Validasi pengembalian kunci gagal! Silahkan dicoba kembali."
       );
       res.redirect("/admin/pinjam_kunci/validasi_kembali_kunci");
+=======
+  } else {
+    if(req.user.RoleId === 7) {
+      req.flash("failed", "Validasi pengembalian kunci gagal! Silahkan dicoba kembali.");
+      res.redirect("/satpam/pinjam_kunci/validasi_kembali_kunci")
+    } else if (req.user.RoleId === 2) {
+      req.flash("failed", "Validasi pengembalian kunci gagal! Silahkan dicoba kembali.");
+      res.redirect("/admin/pinjam_kunci/validasi_kembali_kunci")
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
     }
   }
 };

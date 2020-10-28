@@ -32,7 +32,10 @@
     "mysql2": "^2.1.0",
     "nexmo": "^2.8.0",
     "node-fetch": "^2.6.1",
+<<<<<<< HEAD
     "nodemailer": "^6.4.14",
+=======
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "pg": "^8.2.1",

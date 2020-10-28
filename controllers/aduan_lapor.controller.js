@@ -2,7 +2,10 @@ const { User, Aduan_Lapor, Komentar, Notifications } = require("./../models");
 const excel = require("exceljs");
 const Op = require("sequelize").Op;
 const db = require("../models");
+<<<<<<< HEAD
 const { sendEmailNotification } = require("./../helper/sendEmail");
+=======
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
 
 require("express-async-errors");
 

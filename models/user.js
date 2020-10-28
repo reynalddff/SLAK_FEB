@@ -71,6 +71,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
     },
+<<<<<<< HEAD
     {
       hooks: {
         beforeCreate: async function (user) {
@@ -81,6 +82,73 @@ module.exports = (sequelize, DataTypes) => {
           console.log(user.password);
         },
       },
+=======
+    nama_user: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      isEmail: true,
+      allowNull: false,
+      unique: {
+        args: true,
+        msg: 'Duplicate email!'
+      }
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: {
+        args: true,
+        msg: 'Duplicate username!'
+      }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    telp_user: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    foto_user: {
+      type: DataTypes.STRING,
+      defaultValue: "",
+      // get() {
+      //   const foto_user = this.getDataValue('foto_user');
+      //   return uploadDir + foto_user
+      // }
+    },
+    foto_ktp: {
+      type: DataTypes.STRING,
+      defaultValue: "",
+      get() {
+        const foto_ktp = this.getDataValue('foto_ktp');
+        return uploadDir + foto_ktp
+      }
+    },
+    isValid: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "belum divalidasi",
+      validate: {
+        isIn: {
+          args: [["belum divalidasi", "sudah divalidasi", "dibuat oleh admin"]],
+          msg: "status aduan hanya tersedia 3 pilihan: belum divalidasi, sudah divalidasi atau dibuat oleh admin",
+        },
+      },
+    }
+  }, {
+    hooks: {
+      beforeCreate: async function (user) {
+        const salt = await bcrypt.genSaltSync(10);
+        if (user.password) {
+          user.password = await bcrypt.hashSync(user.password, salt);
+        }
+        console.log(user.password)
+      }
+>>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
     }
   );
   User.associate = function (models) {
