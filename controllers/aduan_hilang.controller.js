@@ -2,10 +2,7 @@ const { Aduan_Hilang, User, Notifications } = require("./../models");
 const { Op } = require("sequelize");
 const excel = require("exceljs");
 const db = require("../models");
-<<<<<<< HEAD
 const { sendEmailNotification } = require("./../helper/sendEmail");
-=======
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
 
 exports.getAduanKehilangan = async (req, res) => {
   if (req.user.RoleId === 1) {
@@ -102,19 +99,11 @@ exports.updateContactProfile3 = async (req, res) => {
       where: {
         id: req.user.id,
       },
-<<<<<<< HEAD
     });
     user.update({
       telp_user,
       email,
     });
-=======
-    });
-    user.update({
-      telp_user,
-      email,
-    });
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
     res.redirect("/karyawan/aduan_hilang/form");
   } catch (error) {
     res.send({ error });
@@ -159,7 +148,6 @@ exports.createAduanHilang = async (req, res) => {
       foto_barang: req.file === undefined ? "" : req.file.filename,
       UserId: req.user.id,
     });
-<<<<<<< HEAD
 
     // create notifications untuk satpam
     await Notifications.create({
@@ -187,17 +175,6 @@ exports.createAduanHilang = async (req, res) => {
       "testing.feb.psik@gmail.com", //sementara doang
       `<p>Telah masuk aduan hilang dari <b>${karyawan.nama_user}</b>, silahkan segera divalidasi. Terimakasih.</p>`
     );
-=======
-
-    // create notifications untuk satpam
-    await Notifications.create({
-      layananId: aduan.id,
-      jenis_notif: "aduan barang hilang",
-      deskripsi_notif: `Permintaan validasi aduan barang hilang dari ${req.user.nama_user}`,
-      tujuan_notif: "7", //Role Id Satpam
-      UserId: req.user.id,
-    });
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
 
     req.flash("success", "Aduan berhasil ditambahkan");
     res.redirect("/karyawan/aduan_hilang");
@@ -207,10 +184,7 @@ exports.createAduanHilang = async (req, res) => {
 exports.validasiSatpamAduan = async (req, res) => {
   const { id } = req.params;
   const aduan = await Aduan_Hilang.findOne({ where: { id } });
-<<<<<<< HEAD
   const user = await User.findOne({ where: { id: aduan.UserId } });
-=======
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
   if (!aduan) {
     req.flash("error", "Aduan tidak ditemukan");
     if (req.user.RoleId === 2) {
@@ -221,7 +195,6 @@ exports.validasiSatpamAduan = async (req, res) => {
   }
 
   await aduan.update({ status_aduan: "menunggu validasi admin / kasubbag" });
-<<<<<<< HEAD
 
   await sendEmailNotification(
     "Aduan Hilang",
@@ -229,8 +202,6 @@ exports.validasiSatpamAduan = async (req, res) => {
     `<p>Aduan yang anda laporkan telah divalidasi oleh satpam. Silahkan menunggu untuk diverifikasi oleh kasubbag. Terimakasih</p>`
   );
 
-=======
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
   req.flash("success", "Aduan berhasil divalidasi");
   if (req.user.RoleId === 2) {
     res.redirect("/admin/aduan_hilang");
@@ -242,24 +213,18 @@ exports.validasiSatpamAduan = async (req, res) => {
 exports.validasiAdminAduan = async (req, res) => {
   const { id } = req.params;
   const aduan = await Aduan_Hilang.findOne({ where: { id } });
-<<<<<<< HEAD
   const user = await User.findOne({ where: { id: aduan.UserId } });
-=======
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
   if (!aduan) {
     req.flash("error", "Aduan tidak ditemukan");
     res.redirect("/admin/aduan_hilang");
   }
 
   await aduan.update({ status_aduan: "divalidasi" });
-<<<<<<< HEAD
   await sendEmailNotification(
     "Aduan Hilang",
     user.email,
     `<p>Aduan yang anda laporkan telah diverifiaksi oleh kasubbag. Silahkan mengambil surat di <b>Kantor Satpam Gedung Utama Lantai 1</b>. Terimakasih</p>`
   );
-=======
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
   req.flash("success", "Aduan berhasil divalidasi");
   if (req.user.RoleId === 2) {
     res.redirect("/admin/aduan_hilang/validasi_admin");
@@ -406,10 +371,6 @@ exports.downloadAduanHilang = async (req, res) => {
     }
   }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
   let workbook = new excel.Workbook();
   let worksheet = workbook.addWorksheet("Aduan");
 
@@ -437,8 +398,4 @@ exports.downloadAduanHilang = async (req, res) => {
 
   const dataExport = await workbook.xlsx.write(res);
   return res.status(200).end();
-<<<<<<< HEAD
 };
-=======
-}
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221

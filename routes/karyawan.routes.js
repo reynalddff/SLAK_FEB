@@ -3,7 +3,6 @@ const router = express.Router();
 const Op = require("sequelize").Op;
 
 // models
-<<<<<<< HEAD
 const {
   Aduan_Lapor,
   Role,
@@ -11,9 +10,6 @@ const {
   User,
   Notifications,
 } = require("./../models");
-=======
-const { Aduan_Lapor, Role, Kunci, User, Notifications } = require('./../models');
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
 //middleware auth
 const check = require("./../middlewares/rolePermission");
 // upload multer
@@ -57,13 +53,8 @@ router.use(check.isKaryawan, check.isLoggedIn);
 router.get("/", async (req, res, next) => {
   const aduans = await Aduan_Lapor.findAll({
     where: {
-<<<<<<< HEAD
       UserId: req.user.id,
     },
-=======
-      UserId: req.user.id
-    }
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
   });
 
   const notifications = await Notifications.findAll({
@@ -112,16 +103,6 @@ router.get("/aduan_lapor/form", async (req, res) => {
     foto_user: req.user.foto_user,
     UserId: req.user.id,
   });
-<<<<<<< HEAD
-=======
-  res.render('karyawan/aduan_lapor/aduan_lapor_form', { 
-    roles, 
-    notifications, 
-    user: req.user,
-    nama_user: req.user.nama_user, 
-    foto_user: req.user.foto_user, 
-    UserId: req.user.id })
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
 });
 router.post("/aduan_lapor/form", upload.single("foto_aduan"), createAduan);
 router.get("/aduan_lapor/delete_aduan/:id", deleteAduan);
@@ -132,7 +113,6 @@ router.get("/aduan_lapor/edit/:id", async (req, res) => {
     },
   });
 
-<<<<<<< HEAD
   const roles = await Role.findAll({
     where: {
       [Op.not]: [{ id: [1, 2, 7] }],
@@ -164,11 +144,6 @@ router.post("/aduan_lapor/komentar/:id", memberikanKomentar);
 // kunci
 router.get("/pinjam_kunci", getPeminjamanKunci);
 router.post("/pinjam_kunci", pinjamKunci);
-=======
-// kunci
-router.get('/pinjam_kunci', getPeminjamanKunci);
-router.post('/pinjam_kunci', pinjamKunci);
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
 // router.get('/pinjam_kunci/konfirmasi/:id', getContactProfile2);
 // router.post('/pinjam_kunci/konfirmasi/:id', updateContactProfile2);
 
@@ -183,16 +158,11 @@ router.get("/aduan_hilang/form", async (req, res) => {
     },
     order: [["createdAt", "DESC"]],
   });
-<<<<<<< HEAD
-  res.render("karyawan/aduan_hilang/aduan_barang_hilang_form", {
-=======
   res.render('karyawan/aduan_hilang/aduan_barang_hilang_form', {
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
     notifications,
     nama_user: req.user.nama_user,
     foto_user: req.user.foto_user,
     user: req.user,
-<<<<<<< HEAD
   });
 });
 router.post(
@@ -201,15 +171,5 @@ router.post(
   createAduanHilang
 );
 router.get("/aduan_hilang/delete_aduan/:id", deleteAduanHilang);
-=======
-  })
-})
-router.post('/aduan_hilang/form', upload.single('foto_barang'), createAduanHilang);
-router.get('/aduan_hilang/delete_aduan/:id', deleteAduanHilang);
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
 
-// Survey
-router.get("/survey", async (req, res) => {
-  res.send("<h1> Under construction </h1>");
-});
 module.exports = router;
