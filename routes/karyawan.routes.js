@@ -158,7 +158,7 @@ router.get("/aduan_hilang/form", async (req, res) => {
     },
     order: [["createdAt", "DESC"]],
   });
-  res.render('karyawan/aduan_hilang/aduan_barang_hilang_form', {
+  res.render("karyawan/aduan_hilang/aduan_barang_hilang_form", {
     notifications,
     nama_user: req.user.nama_user,
     foto_user: req.user.foto_user,

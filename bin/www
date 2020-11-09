@@ -27,7 +27,6 @@ var server = http.createServer(app);
 const db = require("./../models").sequelize;
 db.sync({ force: false })
   .then(() => console.log(`Postgresql database is ready to use`))
-<<<<<<< HEAD
   .then(
     server.listen(port, () =>
       console.log(`###### SERVER IS RUNNING ON PORT 3000  ######`)
@@ -35,11 +34,6 @@ db.sync({ force: false })
   );
 server.on("error", onError);
 server.on("listening", onListening);
-=======
-  .then(server.listen(port, () => console.log(`###### SERVER IS RUNNING ON PORT 3000  ######`)));
-server.on('error', onError);
-server.on('listening', onListening);
->>>>>>> 545070e64a206e6c75356f6f5aaab26b2fe65221
 
 /**
  * Normalize a port into a number, string, or false.

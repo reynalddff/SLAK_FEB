@@ -106,11 +106,20 @@ exports.createAduan = async (req, res) => {
       },
     });
 
-    await sendEmailNotification(
-      "Aduan Lapor",
-      operator.email,
-      `<p> Telah masuk aduan lapor dari <b>${karyawan.nama_user}</b>, silahkan segera diselsaikan. Terimakasih. </p>`
-    );
+    if (operator) {
+      const recipentMail = `${operator.mail}, testing.feb.psik@gmail.com`;
+      await sendEmailNotification(
+        "Aduan Lapor",
+        recipentMail,
+        `<p> Telah masuk aduan lapor dari <b>${karyawan.nama_user}</b>, silahkan segera diselsaikan. Terimakasih. </p>`
+      );
+    } else {
+      await sendEmailNotification(
+        "Aduan Lapor",
+        "testing.feb.psik@gmail.com",
+        `<p> Telah masuk aduan lapor dari <b>${karyawan.nama_user}</b>, silahkan segera diselsaikan. Terimakasih. </p>`
+      );
+    }
 
     req.flash("success", "Aduan berhasil ditambahkan");
     res.redirect("/karyawan/aduan_lapor");
