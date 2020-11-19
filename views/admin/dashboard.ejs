@@ -12,7 +12,67 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="card card-statistic-1">
-                            <div class="card-icon bg-primary">
+                            <div class="card-icon bg-success">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Total Aduan Lapor</h4>
+                                </div>
+                                <div class="card-body">
+                                    <%= allAduan %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="card card-statistic-1">
+                            <div class="card-icon bg-danger">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Total Aduan Lapor (Belum)</h4>
+                                </div>
+                                <div class="card-body">
+                                    <%= allAduanBelum %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="card card-statistic-1">
+                            <div class="card-icon bg-success">
+                                <i class="fas fa-hands-helping"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Total Aduan Hilang</h4>
+                                </div>
+                                <div class="card-body">
+                                    <%= totalAduanHilang %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="card card-statistic-1">
+                            <div class="card-icon bg-danger">
+                                <i class="fas fa-hands-helping"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Total Aduan Hilang (Belum)</h4>
+                                </div>
+                                <div class="card-body">
+                                    <%= aduanHilangBelum %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="card card-statistic-1">
+                            <div class="card-icon bg-success">
                                 <i class="fas fa-users"></i>
                             </div>
                             <div class="card-wrap">
@@ -20,14 +80,14 @@
                                     <h4>Total Pengguna Aktif</h4>
                                 </div>
                                 <div class="card-body">
-                                    <%= user %>
+                                    <%= allUser %>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="card card-statistic-1">
-                            <div class="card-icon bg-warning">
+                            <div class="card-icon bg-danger">
                                 <i class="fas fa-users"></i>
                             </div>
                             <div class="card-wrap">
@@ -35,7 +95,7 @@
                                     <h4>Total Pengguna Yang Harus Divalidasi</h4>
                                 </div>
                                 <div class="card-body">
-                                    <%= user %>
+                                    <%= userIsNotValid %>
                                 </div>
                             </div>
                         </div>
