@@ -9,8 +9,9 @@ package-lock.json
 *.log
 *.gz
 
-
 *.jpg
 *.png
+
+Procfile
 
 config/credentials.js
