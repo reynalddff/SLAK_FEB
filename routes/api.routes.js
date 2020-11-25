@@ -736,8 +736,8 @@ router.get('/aduanForChart2', async (req, res) => {
     const allAduan = await Aduan_Hilang.findAll({});
     const allAduanBelumSelsai = allAduan.filter((aduan) => {
       return (
-        aduan.status_aduan === 'menunggu validasi satpam' &&
-        'menunggu validasi admin / kasubbag'
+        aduan.status_aduan === 'menunggu validasi admin / kasubbag' &&
+        'menunggu validasi satpam'
       );
     });
     if (allAduan.length === 0) {
@@ -749,6 +749,7 @@ router.get('/aduanForChart2', async (req, res) => {
       total_aduan: allAduan.length,
       aduan_belum_selesai: allAduanBelumSelsai.length,
       aduan_sudah_selesai: allAduan.length - allAduanBelumSelsai.length,
+      allAduanBelumSelsai,
     });
   }
   const aduanByMonth = await db.sequelize.query(

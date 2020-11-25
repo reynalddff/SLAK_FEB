@@ -86,11 +86,11 @@ router.get('/', async (req, res) => {
 
       const allAduanHilangBelum = allAduanHilang.filter((aduan) => {
         return (
-          aduan.status_aduan === 'menunggu validasi satpam' &&
-          'menunggu validasi admin / kasubbag'
+          aduan.status_aduan === 'menunggu validasi admin / kasubbag' &&
+          'menunggu validasi satpam'
         );
       });
-
+      console.log('total: ' + allAduanHilangBelum);
       return res.render('satpam/dashboard', {
         notifications,
         user: 6,
@@ -120,8 +120,8 @@ router.get('/', async (req, res) => {
 
       const aduanHilangPerBulanBelum = aduanHilangPerBulan.filter((aduan) => {
         return (
-          aduan.status_aduan === 'menunggu validasi satpam' &&
-          'menunggu validasi admin / kasubbag'
+          aduan.status_aduan === 'menunggu validasi admin / kasubbag' &&
+          'menunggu validasi satpam'
         );
       });
 
@@ -149,8 +149,8 @@ router.get('/', async (req, res) => {
 
   const allAduanHilangBelum = allAduanHilang.filter((aduan) => {
     return (
-      aduan.status_aduan === 'menunggu validasi satpam' &&
-      'menunggu validasi admin / kasubbag'
+      aduan.status_aduan === 'menunggu validasi admin / kasubbag' &&
+      'menunggu validasi satpam'
     );
   });
 

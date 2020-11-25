@@ -96,7 +96,6 @@ router.get('/', async (req, res, next) => {
       ],
     },
   });
-  console.log(allUser, userIsNotValid);
   if (bulan) {
     if (bulan.length > 2) {
       bulan = '0' + bulan;
@@ -114,8 +113,8 @@ router.get('/', async (req, res, next) => {
 
       const allAduanHilangBelum = allAduanHilang.filter((aduan) => {
         return (
-          aduan.status_aduan === 'menunggu validasi satpam' ||
-          'menunggu validasi admin / kasubbag'
+          aduan.status_aduan === 'menunggu validasi admin / kasubbag' &&
+          'menunggu validasi satpam'
         );
       });
 
@@ -144,6 +143,18 @@ router.get('/', async (req, res, next) => {
       });
     }
     if (tahun !== 'semua') {
+      const allAduanLapor = await Aduan_Lapor.findAll({});
+      const allAduanHilang = await Aduan_Hilang.findAll({});
+      const allAduanLaporBelum = allAduanLapor.filter((aduan) => {
+        return aduan.status_aduan === 'belum';
+      });
+
+      const allAduanHilangBelum = allAduanHilang.filter((aduan) => {
+        return (
+          aduan.status_aduan === 'menunggu validasi satpam' ||
+          'menunggu validasi admin / kasubbag'
+        );
+      });
       const aduanLaporPerBulan = await db.sequelize.query(
         `SELECT * FROM "Aduan_Lapors" AS "Aduan_Lapor" WHERE date_trunc('month', "Aduan_Lapor"."createdAt")::date = '${tahun}-${bulan}-01'::date`,
         {
@@ -166,8 +177,8 @@ router.get('/', async (req, res, next) => {
 
       const aduanHilangPerBulanBelum = aduanHilangPerBulan.filter((aduan) => {
         return (
-          aduan.status_aduan === 'menunggu validasi satpam' ||
-          'menunggu validasi admin / kasubbag'
+          aduan.status_aduan === 'menunggu validasi admin / kasubbag' &&
+          'menunggu validasi satpam'
         );
       });
 
@@ -206,8 +217,8 @@ router.get('/', async (req, res, next) => {
 
   const allAduanHilangBelum = allAduanHilang.filter((aduan) => {
     return (
-      aduan.status_aduan === 'menunggu validasi satpam' ||
-      'menunggu validasi admin / kasubbag'
+      aduan.status_aduan === 'menunggu validasi admin / kasubbag' &&
+      'menunggu validasi satpam'
     );
   });
 

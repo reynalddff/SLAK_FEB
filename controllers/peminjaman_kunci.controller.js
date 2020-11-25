@@ -28,9 +28,16 @@ exports.getPeminjamanKunci = async (req, res) => {
     );
   };
 
-  const dataPinjam = await Data_Peminjaman.findOne({
+  const dataPinjamNotValid = await Data_Peminjaman.findOne({
     where: {
-      status_peminjaman: 'menunggu validasi' || 'sudah divalidasi',
+      status_peminjaman: 'menunggu validasi',
+      UserId: req.user.id,
+    },
+  });
+
+  const dataPinjamValid = await Data_Peminjaman.findOne({
+    where: {
+      status_peminjaman: 'sudah divalidasi',
       UserId: req.user.id,
     },
   });
@@ -53,7 +60,8 @@ exports.getPeminjamanKunci = async (req, res) => {
       order: [['nama_ruangan', 'ASC']],
     });
     res.render('karyawan/pinjam_kunci/pinjam_kunci', {
-      dataPinjam,
+      dataPinjamNotValid,
+      dataPinjamValid,
       today,
       kunci,
       notifications,
@@ -79,7 +87,8 @@ exports.getPeminjamanKunci = async (req, res) => {
     });
 
     res.render('karyawan/pinjam_kunci/pinjam_kunci', {
-      dataPinjam,
+      dataPinjamNotValid,
+      dataPinjamValid,
       user: req.user,
       kunci,
       notifications,
@@ -105,7 +114,8 @@ exports.getPeminjamanKunci = async (req, res) => {
   });
 
   res.render('karyawan/pinjam_kunci/pinjam_kunci', {
-    dataPinjam,
+    dataPinjamNotValid,
+    dataPinjamValid,
     user: req.user,
     kunci,
     tanggal: today,

@@ -19,7 +19,7 @@
             </div>
         </div>
         <% } %>
-        <% if (!dataPinjam) { %>
+        <% if (!dataPinjamValid && !dataPinjamNotValid) { %>
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="card card-primary">
@@ -147,9 +147,12 @@
                 </div>
             </div>
         </div>
-        <% } else { %>
+        <% } else if (dataPinjamValid) { %>
         <h1>Silahkan datang ke kantor satpam di lantai 1 gedung dekanan lama untuk mengambil kunci yang tadi dipinjam,
-            Terimakasih!</h1>
+            Terimakasih!
+        </h1>
+        <% } else if (dataPinjamNotValid) { %>
+        <h1>Silahkan menunggu validasi peminjaman, terimakasih!</h1>
         <% } %>
     </section>
 </div>
