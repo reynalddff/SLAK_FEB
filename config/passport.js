@@ -1,9 +1,9 @@
 //load bcrypt
-const bCrypt = require('bcryptjs');
+const bCrypt = require("bcryptjs");
 
 module.exports = (passport, user) => {
   let User = user;
-  const LocalStrategy = require('passport-local').Strategy;
+  const LocalStrategy = require("passport-local").Strategy;
 
   passport.serializeUser((user, done) => {
     done(null, user.id);
@@ -22,12 +22,12 @@ module.exports = (passport, user) => {
 
   //LOCAL SIGNIN
   passport.use(
-    'local-signin',
+    "local-signin",
     new LocalStrategy(
       {
         // by default, local strategy uses username and password, we will override with email
-        usernameField: 'username',
-        passwordField: 'password',
+        usernameField: "username",
+        passwordField: "password",
         passReqToCallback: true, // allows us to pass back the entire request to the callback
       },
 
@@ -35,7 +35,7 @@ module.exports = (passport, user) => {
         let User = user;
         try {
           var criteria =
-            username.indexOf('@') === -1
+            username.indexOf("@") === -1
               ? { username: username }
               : { email: username };
           const userFinded = await User.findOne({
@@ -45,7 +45,7 @@ module.exports = (passport, user) => {
             return done(
               null,
               false,
-              req.flash('error_msg', 'Login failure. User is not found')
+              req.flash("error_msg", "Login failure. User is not found")
             );
           }
 
@@ -57,7 +57,7 @@ module.exports = (passport, user) => {
             return done(
               null,
               false,
-              req.flash('error_msg', 'Login failure. Password is not correct')
+              req.flash("error_msg", "Login failure. Password is not correct")
             );
           } else {
             return done(null, userFinded);
